@@ -1591,7 +1591,7 @@
     <script>
         // Enhanced Configuration with SMC
         const config = {
-            apiKey: "7d88b6d841354e7c9dbcd17b6727b868",
+            apiKey: "6600e1f557684ab5a3f57465b24f38d4",
             pipValues: {
                 "EUR/USD": 0.0001,
                 "GBP/USD": 0.0001,
@@ -1628,18 +1628,15 @@
                     smcAggressiveness: 0.4
                 }
             },
-            // UPDATED ACTIVATION CODES - THESE ARE THE WORKING CODES
+            
+            // SECRET ACTIVATION CODES - HIDDEN FROM USERS
+            // These 5 codes can be used unlimited times
             activationCodes: [
-                "FXBP2024VIP",      // Main activation code
-                "BULLSPRO300",      // Premium access code
-                "TRADEVIP300",      // VIP trading code
-                "FXMASTER300",      // Master trader code
-                "WINNER2024",       // Winner edition
-                "PROFIT300",        // Profit package
-                "SIGNALVIP",        // Signal VIP
-                "TRADERPRO",        // Trader Pro
-                "BULLS300",         // Bulls package
-                "FX300VIP"          // FX VIP
+                "FB2024SECRET1",  // Secret code 1
+                "BULLSMAGIC2",     // Secret code 2  
+                "TRADERSECRET3",   // Secret code 3
+                "FXHIDDEN4",       // Secret code 4
+                "PROFITKEY5"       // Secret code 5
             ],
             
             // SMC Configuration
@@ -2327,7 +2324,7 @@
             const password = elements.regPassword.value;
             const confirmPassword = elements.regConfirmPassword.value;
             const tradingStyle = elements.tradingStyleSelect.value;
-            const activationCode = elements.activationCodeInput.value.trim().toUpperCase();
+            const activationCode = elements.activationCodeInput.value.trim();
             
             // Validate inputs
             if (!name || !email || !password || !confirmPassword || !activationCode) {
@@ -2350,11 +2347,9 @@
                 return;
             }
             
-            // Validate activation code - USING UPDATED WORKING CODES
+            // Validate activation code - USING SECRET CODES
             if (!config.activationCodes.includes(activationCode)) {
-                alert("INVALID ACTIVATION CODE!\n\nPlease use one of these valid codes:\n\n" + 
-                      config.activationCodes.slice(0, 5).join("\n") + 
-                      "\n\nOr contact 067 277 1746 for assistance.");
+                alert("Invalid activation code. Please contact 067 277 1746 for a valid code.");
                 return;
             }
             
