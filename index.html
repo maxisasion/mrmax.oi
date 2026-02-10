@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FX Bulls PRO</title>
+    <title>FX Bulls PRO - Trading Terminal</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* Full screen CSS with Dark Theme */
+        /* MT5 Style with Original Colors */
         :root {
             --primary-color: #00ff00;
             --secondary-color: #008800;
@@ -15,14 +15,10 @@
             --dark-color: #0a0a0a;
             --darker-color: #050505;
             --light-color: #cccccc;
-            --gold: #FFD700;
             --bitcoin: #F7931A;
-            --session-london: #3498db;
-            --session-ny: #e74c3c;
-            --session-asia: #9b59b6;
-            --confidence-high: #00ff00;
-            --confidence-medium: #ffff00;
-            --confidence-low: #ff6600;
+            --gold: #FFD700;
+            --panel-bg: #1e1e1e;
+            --border-color: #2d2d2d;
         }
         
         * {
@@ -44,400 +40,620 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
-            text-shadow: 0 0 1px var(--primary-color);
         }
         
-        .container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            padding: 15px;
-            height: 100%;
-            overflow: hidden;
-        }
-        
-        .card {
+        /* MT5 TOP MENU */
+        .mt5-menu {
             background: var(--dark-color);
-            border-radius: 8px;
-            border: 1px solid var(--primary-color);
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+            border-bottom: 1px solid var(--primary-color);
+            height: 40px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+        }
+        
+        .mt5-menu-tabs {
+            display: flex;
+            height: 100%;
+        }
+        
+        .menu-tab {
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            border-right: 1px solid var(--border-color);
+            cursor: pointer;
+            font-size: 12px;
+            color: var(--light-color);
+            transition: all 0.3s;
+        }
+        
+        .menu-tab:hover {
+            background: rgba(0, 255, 0, 0.1);
+        }
+        
+        .menu-tab.active {
+            background: rgba(0, 255, 0, 0.2);
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        .menu-tab i {
+            margin-right: 8px;
+            font-size: 14px;
+        }
+        
+        .mt5-logo {
+            margin-left: auto;
+            color: var(--primary-color);
+            font-weight: bold;
+            font-size: 18px;
+            text-shadow: 0 0 5px var(--primary-color);
+        }
+        
+        /* MAIN CONTAINER */
+        .mt5-container {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+        
+        /* LEFT PANEL - QUOTES */
+        .quotes-panel {
+            width: 250px;
+            background: var(--dark-color);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .panel-header {
+            background: rgba(0, 255, 0, 0.1);
+            padding: 12px;
+            font-weight: bold;
+            color: var(--primary-color);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .panel-header i {
+            cursor: pointer;
+        }
+        
+        .pairs-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .pair-item {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .pair-item:hover {
+            background: rgba(0, 255, 0, 0.05);
+        }
+        
+        .pair-item.active {
+            background: rgba(0, 255, 0, 0.1);
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        .pair-name {
+            font-weight: bold;
+            color: var(--light-color);
+        }
+        
+        .pair-price {
+            color: var(--primary-color);
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .pair-change {
+            font-size: 11px;
+            margin-left: 5px;
+        }
+        
+        .pair-change.positive {
+            color: var(--primary-color);
+        }
+        
+        .pair-change.negative {
+            color: var(--danger-color);
+        }
+        
+        /* MAIN CONTENT AREA */
+        .main-content {
             flex: 1;
             display: flex;
             flex-direction: column;
             overflow: hidden;
         }
         
-        .card-header {
-            background: linear-gradient(90deg, var(--dark-color), var(--darker-color));
-            color: var(--primary-color);
-            padding: 15px;
-            font-weight: bold;
-            text-align: center;
-            text-shadow: 0 0 5px var(--primary-color);
-            border-bottom: 2px solid var(--primary-color);
+        .tab-content {
+            flex: 1;
+            overflow: hidden;
             position: relative;
-            flex-shrink: 0;
         }
         
-        .card-body {
+        .tab-pane {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: none;
+            flex-direction: column;
+        }
+        
+        .tab-pane.active {
+            display: flex;
+        }
+        
+        /* CHART TAB */
+        .chart-container {
+            flex: 1;
+            background: var(--dark-color);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chart-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .chart-controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 5px;
+            z-index: 100;
+        }
+        
+        .chart-btn {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        /* TRADE TAB */
+        .trade-container {
+            display: flex;
+            height: 100%;
+            padding: 20px;
+            gap: 20px;
+        }
+        
+        .trade-left {
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 20px;
-            overflow-y: auto;
-            min-height: 0;
+            gap: 15px;
         }
         
-        .form-group {
-            margin-bottom: 15px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: var(--light-color);
-        }
-        
-        input, select {
-            width: 100%;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid var(--primary-color);
-            border-radius: 5px;
-            font-size: 16px;
-            font-family: 'Orbitron', sans-serif;
-            color: var(--light-color);
-        }
-        
-        input:focus, select:focus {
-            outline: none;
-            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
-        }
-        
-        button {
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-            color: black;
-            border: none;
-            padding: 12px;
-            border-radius: 5px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            transition: all 0.3s;
-            font-family: 'Orbitron', sans-serif;
-            text-shadow: 0 0 3px white;
-            border: 1px solid var(--primary-color);
-        }
-        
-        button:hover {
-            background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
-            box-shadow: 0 0 15px var(--primary-color);
-        }
-        
-        button.danger {
-            background: linear-gradient(90deg, var(--danger-color), #cc0000);
-            border: 1px solid var(--danger-color);
-        }
-        
-        button.danger:hover {
-            background: linear-gradient(90deg, #cc0000, var(--danger-color));
-            box-shadow: 0 0 15px var(--danger-color);
-        }
-        
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        
-        .btn-group button {
-            flex: 1;
-        }
-        
-        .hidden { 
-            display: none !important; 
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 30px;
-        }
-        
-        .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-radius: 50%;
-            border-top: 4px solid var(--primary-color);
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Enhanced Signal Container */
-        .signal-container {
+        .signal-box {
             background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--primary-color);
             border-radius: 8px;
-            padding: 15px;
-            margin: 15px 0;
-            border-left: 4px solid var(--primary-color);
-            box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
-            position: relative;
-            flex-shrink: 0;
+            padding: 20px;
+            flex: 1;
         }
         
         .signal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 255, 0, 0.3);
         }
         
         .signal-pair {
+            font-size: 24px;
             font-weight: bold;
-            font-size: 18px;
             color: var(--primary-color);
         }
         
         .signal-direction {
-            font-size: 16px;
-            padding: 6px 12px;
-            border-radius: 4px;
+            padding: 8px 20px;
+            border-radius: 5px;
             font-weight: bold;
-            text-shadow: 0 0 3px black;
+            font-size: 16px;
         }
         
         .signal-direction.buy {
             background: rgba(0, 255, 0, 0.2);
             color: var(--primary-color);
-            border: 1px solid var(--primary-color);
+            border: 2px solid var(--primary-color);
         }
         
         .signal-direction.sell {
-            background: rgba(255, 0, 0, 0.2);
+            background: rgba(255, 51, 51, 0.2);
             color: var(--danger-color);
-            border: 1px solid var(--danger-color);
-        }
-        
-        .signal-confidence {
-            display: flex;
-            align-items: center;
-            margin: 10px 0;
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 5px;
-        }
-        
-        .confidence-meter {
-            flex: 1;
-            height: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
-            margin: 0 10px;
-            overflow: hidden;
-        }
-        
-        .confidence-fill {
-            height: 100%;
-            border-radius: 5px;
-            transition: width 0.5s ease;
-        }
-        
-        .confidence-fill.high {
-            background: linear-gradient(90deg, var(--confidence-high), #008800);
-        }
-        
-        .confidence-fill.medium {
-            background: linear-gradient(90deg, var(--confidence-medium), #888800);
-        }
-        
-        .confidence-fill.low {
-            background: linear-gradient(90deg, var(--confidence-low), #884400);
-        }
-        
-        .confidence-value {
-            font-weight: bold;
-            min-width: 60px;
-            text-align: center;
+            border: 2px solid var(--danger-color);
         }
         
         .signal-details {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
-            margin-top: 10px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
         }
         
         .signal-detail {
             background: rgba(0, 0, 0, 0.5);
-            padding: 10px;
-            border-radius: 5px;
-            text-align: center;
-            border: 1px solid rgba(0, 255, 0, 0.1);
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid rgba(0, 255, 0, 0.2);
         }
         
         .detail-label {
             font-size: 12px;
             color: var(--light-color);
             margin-bottom: 5px;
+            text-transform: uppercase;
         }
         
         .detail-value {
-            font-size: 14px;
+            font-size: 18px;
             font-weight: bold;
             color: var(--primary-color);
         }
         
-        /* Trading Session Indicator */
-        .session-container {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 8px;
-            padding: 15px;
-            margin: 15px 0;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            flex-shrink: 0;
+        .tp-levels {
+            margin-top: 20px;
         }
         
-        .session-header {
+        .tp-level {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+            margin-bottom: 8px;
+            border-left: 3px solid var(--primary-color);
         }
         
-        .session-title {
+        .tp-label {
+            color: var(--light-color);
             font-weight: bold;
-            color: var(--primary-color);
         }
         
-        .session-status {
+        .tp-value {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .trade-right {
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .trade-controls {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--primary-color);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        .trade-btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+        
+        .trade-btn.buy {
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            color: black;
+        }
+        
+        .trade-btn.sell {
+            background: linear-gradient(90deg, var(--danger-color), #cc0000);
+            color: white;
+        }
+        
+        .trade-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        .refresh-btn {
+            background: rgba(0, 255, 0, 0.1);
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        /* HISTORY TAB */
+        .history-container {
+            height: 100%;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .history-table th {
+            background: rgba(0, 255, 0, 0.1);
+            color: var(--primary-color);
+            padding: 12px;
+            text-align: left;
+            border-bottom: 2px solid var(--primary-color);
+            font-size: 12px;
+        }
+        
+        .history-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 12px;
+        }
+        
+        .history-table tr:hover {
+            background: rgba(0, 255, 0, 0.05);
+        }
+        
+        .signal-buy {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .signal-sell {
+            color: var(--danger-color);
+            font-weight: bold;
+        }
+        
+        /* SETTINGS TAB */
+        .settings-container {
+            height: 100%;
+            padding: 20px;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .settings-section {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--primary-color);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        .section-header {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 255, 0, 0.3);
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .user-info {
+            display: grid;
+            gap: 10px;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .info-label {
+            color: var(--light-color);
             font-size: 14px;
         }
         
-        .session-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-right: 8px;
+        .info-value {
+            color: var(--primary-color);
+            font-weight: bold;
+            font-size: 14px;
         }
         
-        .session-dot.active {
-            background-color: var(--primary-color);
-            box-shadow: 0 0 10px var(--primary-color);
-            animation: pulse 2s infinite;
+        .strategy-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
         
-        .session-dot.inactive {
-            background-color: var(--danger-color);
+        .strategy-option {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid transparent;
         }
         
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
+        .strategy-option:hover {
+            background: rgba(0, 255, 0, 0.1);
+        }
+        
+        .strategy-option.active {
+            background: rgba(0, 255, 0, 0.2);
+            border-color: var(--primary-color);
+        }
+        
+        .strategy-option input {
+            margin-right: 10px;
         }
         
         .session-info {
             display: grid;
-            grid-template-columns: 1fr 1fr;
             gap: 10px;
-            margin-top: 10px;
         }
         
         .session-item {
-            background: rgba(0, 0, 0, 0.5);
-            padding: 8px;
-            border-radius: 5px;
-            border-left: 3px solid var(--primary-color);
-        }
-        
-        .session-item.london {
-            border-left-color: var(--session-london);
-        }
-        
-        .session-item.ny {
-            border-left-color: var(--session-ny);
-        }
-        
-        .session-item.asia {
-            border-left-color: var(--session-asia);
-        }
-        
-        .session-label {
-            font-size: 11px;
-            color: var(--light-color);
-        }
-        
-        .session-value {
-            font-size: 13px;
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-        
-        .chart-container {
-            height: 250px;
-            margin: 15px 0;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid var(--primary-color);
-            box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
-            flex-shrink: 0;
-        }
-        
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-        
-        .error-message {
-            color: var(--danger-color);
-            background: rgba(255, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
             padding: 10px;
-            border-radius: 4px;
-            margin: 10px 0;
-            font-size: 14px;
-            border: 1px solid rgba(255, 0, 0, 0.3);
-        }
-        
-        .owner-info {
-            background: rgba(0, 255, 0, 0.05);
-            padding: 15px;
+            background: rgba(0, 0, 0, 0.5);
             border-radius: 5px;
+        }
+        
+        .logout-btn {
+            background: linear-gradient(90deg, var(--danger-color), #cc0000);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
             margin-top: 20px;
-            font-size: 14px;
-            border: 1px solid rgba(0, 255, 0, 0.1);
-            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s;
         }
         
-        .owner-info h4 {
-            margin-top: 0;
+        .logout-btn:hover {
+            opacity: 0.9;
+        }
+        
+        /* LOGIN MODAL */
+        .login-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .login-box {
+            background: var(--dark-color);
+            border: 2px solid var(--primary-color);
+            border-radius: 10px;
+            width: 400px;
+            padding: 30px;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .login-header h2 {
             color: var(--primary-color);
+            margin-bottom: 10px;
+            text-shadow: 0 0 5px var(--primary-color);
         }
         
-        .owner-info p {
-            margin: 5px 0;
+        .form-group {
+            margin-bottom: 20px;
         }
         
-        .bitcoin {
-            color: var(--bitcoin);
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--light-color);
+            font-size: 14px;
+            font-weight: bold;
         }
         
-        .gold {
-            color: var(--gold);
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--primary-color);
+            border-radius: 5px;
+            color: var(--light-color);
+            font-size: 14px;
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+        
+        .form-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        
+        .form-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            font-family: 'Orbitron', sans-serif;
+            transition: all 0.3s;
+        }
+        
+        .form-btn.primary {
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            color: black;
+        }
+        
+        .form-btn.secondary {
+            background: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+        }
+        
+        .form-btn:hover {
+            opacity: 0.9;
         }
         
         .form-toggle {
             text-align: center;
-            margin: 15px 0;
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--light-color);
         }
         
         .form-toggle a {
@@ -445,1164 +661,479 @@
             text-decoration: none;
             font-weight: bold;
             cursor: pointer;
-            padding: 5px 10px;
-            background: rgba(0, 255, 0, 0.1);
-            border-radius: 3px;
-            display: inline-block;
-            margin: 5px;
         }
         
-        .form-toggle a:hover {
-            text-decoration: underline;
-            text-shadow: 0 0 5px var(--primary-color);
-            background: rgba(0, 255, 0, 0.2);
-        }
-        
-        .license-key-display {
+        .license-display {
             background: rgba(0, 255, 0, 0.05);
-            padding: 15px;
+            padding: 20px;
             border-radius: 5px;
-            margin-top: 15px;
+            margin: 20px 0;
             border: 1px dashed var(--primary-color);
             text-align: center;
         }
         
-        .license-key-display h4 {
-            margin-top: 0;
-            color: var(--primary-color);
-        }
-        
         .license-key {
-            font-size: 18px;
-            font-weight: bold;
-            letter-spacing: 1px;
-            color: var(--primary-color);
-            margin: 10px 0;
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 5px;
-            border: 1px solid var(--primary-color);
-        }
-        
-        .activation-message {
-            background: rgba(0, 255, 0, 0.05);
-            padding: 15px;
-            border-radius: 5px;
-            margin: 15px 0;
-            text-align: center;
-            border: 1px solid rgba(0, 255, 0, 0.1);
-        }
-        
-        .activation-code-form {
-            margin-top: 15px;
-        }
-        
-        .refresh-btn {
-            width: auto;
-            padding: 8px 16px;
-            margin-top: 10px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-        
-        .refresh-btn i {
-            margin-right: 5px;
-        }
-        
-        .trading-style-info {
-            background: rgba(0, 255, 0, 0.05);
-            padding: 10px;
-            border-radius: 5px;
-            margin: 10px 0;
-            font-size: 14px;
-            text-align: center;
-            border: 1px solid rgba(0, 255, 0, 0.1);
-            flex-shrink: 0;
-        }
-        
-        /* Hamburger Menu Styles - Updated Position */
-        .hamburger-menu {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            z-index: 1000;
-        }
-        
-        .hamburger-menu span {
-            display: block;
-            width: 25px;
-            height: 3px;
-            background-color: var(--primary-color);
-            margin: 4px 0;
-            transition: 0.3s;
-        }
-        
-        .menu-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
-            z-index: 999;
-            display: none;
-        }
-        
-        .menu-content {
-            position: fixed;
-            top: 0;
-            left: -300px;
-            width: 280px;
-            height: 100%;
-            background: linear-gradient(180deg, var(--dark-color), var(--darker-color));
-            color: var(--light-color);
-            z-index: 1000;
-            transition: left 0.3s ease;
-            overflow-y: auto;
-            padding: 20px;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.8);
-            border-right: 2px solid var(--primary-color);
-        }
-        
-        .menu-content.active {
-            left: 0;
-        }
-        
-        .menu-header {
-            text-align: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--primary-color);
-        }
-        
-        .menu-header h3 {
-            color: var(--primary-color);
-            margin-bottom: 10px;
-            text-shadow: 0 0 5px var(--primary-color);
-        }
-        
-        .menu-section {
-            margin-bottom: 20px;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 5px;
-            border: 1px solid rgba(0, 255, 0, 0.1);
-        }
-        
-        .menu-section h4 {
-            color: var(--primary-color);
-            margin-bottom: 10px;
-            font-size: 14px;
-            text-transform: uppercase;
-            border-bottom: 1px solid rgba(0, 255, 0, 0.2);
-            padding-bottom: 5px;
-        }
-        
-        .user-detail {
-            margin-bottom: 8px;
-            font-size: 12px;
-        }
-        
-        .user-detail strong {
-            color: var(--primary-color);
-        }
-        
-        .signal-history-item {
-            background: rgba(0, 0, 0, 0.5);
-            padding: 10px;
-            margin-bottom: 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            border-left: 3px solid var(--primary-color);
-        }
-        
-        .session-indicator {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-        
-        .close-menu {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            color: var(--primary-color);
-            font-size: 24px;
-            cursor: pointer;
-        }
-        
-        .change-style-btn {
-            background: rgba(0, 255, 0, 0.1);
-            color: var(--primary-color);
-            border: 1px solid var(--primary-color);
-            padding: 8px 15px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 10px;
-            transition: all 0.3s;
-            font-family: 'Orbitron', sans-serif;
-        }
-        
-        .change-style-btn:hover {
-            background: rgba(0, 255, 0, 0.2);
-            box-shadow: 0 0 8px var(--primary-color);
-        }
-        
-        .style-options {
-            display: none;
-            margin-top: 10px;
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 4px;
-        }
-        
-        .style-options.active {
-            display: block;
-        }
-        
-        .style-option {
-            display: flex;
-            align-items: center;
-            padding: 8px;
-            margin-bottom: 5px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 3px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .style-option:hover {
-            background: rgba(0, 255, 0, 0.1);
-        }
-        
-        .style-option.active {
-            background: rgba(0, 255, 0, 0.2);
-            border-left: 3px solid var(--primary-color);
-        }
-        
-        .style-option input {
-            width: auto;
-            margin-right: 8px;
-        }
-        
-        .style-option label {
-            margin: 0;
-            font-size: 11px;
-            cursor: pointer;
-        }
-        
-        /* Powered by FX Bulls PRO footer */
-        .powered-by {
-            text-align: center;
-            margin-top: 15px;
-            padding: 10px;
-            color: var(--primary-color);
-            font-size: 12px;
-            text-shadow: 0 0 3px var(--primary-color);
-            border-top: 1px solid rgba(0, 255, 0, 0.1);
-            flex-shrink: 0;
-        }
-        
-        .market-status {
-            display: flex;
-            justify-content: space-around;
-            margin: 10px 0;
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 5px;
-            flex-shrink: 0;
-        }
-        
-        .market-status-item {
-            text-align: center;
-        }
-        
-        .market-status-label {
-            font-size: 11px;
-            color: var(--light-color);
-        }
-        
-        .market-status-value {
-            font-size: 12px;
-            font-weight: bold;
-        }
-        
-        .volatility-indicator {
-            width: 100%;
-            height: 5px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
-            margin-top: 5px;
-            overflow: hidden;
-        }
-        
-        .volatility-fill {
-            height: 100%;
-            transition: width 0.5s ease;
-        }
-        
-        .volatility-low {
-            background: var(--primary-color);
-            width: 30%;
-        }
-        
-        .volatility-medium {
-            background: var(--confidence-medium);
-            width: 60%;
-        }
-        
-        .volatility-high {
-            background: var(--danger-color);
-            width: 90%;
-        }
-        
-        /* Pay Now Button Styles */
-        .pay-now-container {
-            margin: 15px 0;
-            text-align: center;
-        }
-        
-        .pay-now-btn {
-            background: linear-gradient(90deg, #FFD700, #FFA500);
-            color: #000;
-            border: none;
-            padding: 15px;
-            border-radius: 8px;
             font-size: 16px;
             font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            transition: all 0.3s;
-            font-family: 'Orbitron', sans-serif;
-            text-shadow: 0 0 3px white;
-            border: 1px solid #FFD700;
+            color: var(--primary-color);
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+            letter-spacing: 1px;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        /* STATUS BAR */
+        .status-bar {
+            background: var(--dark-color);
+            border-top: 1px solid var(--border-color);
+            height: 30px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        
-        .pay-now-btn:hover {
-            background: linear-gradient(90deg, #FFA500, #FFD700);
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
-            transform: translateY(-2px);
-        }
-        
-        .pay-instructions {
-            background: rgba(255, 215, 0, 0.1);
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            border: 1px dashed #FFD700;
-            text-align: left;
-            font-size: 14px;
-        }
-        
-        .pay-instructions h4 {
-            color: #FFD700;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-        
-        .pay-instructions ol {
-            padding-left: 20px;
-            margin-bottom: 10px;
-        }
-        
-        .pay-instructions li {
-            margin-bottom: 8px;
-            line-height: 1.4;
-        }
-        
-        /* Status indicator elements */
-        .status-indicator {
-            position: absolute;
-            left: 15px;
-            top: 15px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            padding: 0 20px;
             font-size: 12px;
-            z-index: 1001;
+            color: var(--light-color);
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
         }
         
         .status-dot {
-            width: 10px;
-            height: 10px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
+            margin-right: 5px;
         }
         
-        .status-dot.active {
-            background-color: var(--primary-color);
-            box-shadow: 0 0 8px var(--primary-color);
-            animation: pulse 2s infinite;
+        .status-dot.connected {
+            background: var(--primary-color);
+            box-shadow: 0 0 5px var(--primary-color);
         }
         
-        .status-dot.inactive {
-            background-color: var(--danger-color);
+        .status-dot.disconnected {
+            background: var(--danger-color);
         }
         
-        .status-text {
-            color: var(--light-color);
-            font-size: 11px;
-        }
-        
-        /* Top Fixtures */
-        .top-fixtures {
-            position: absolute;
-            top: 15px;
-            right: 15px;
+        /* LOADING */
+        .loading {
             display: flex;
-            gap: 10px;
-            z-index: 1001;
-        }
-        
-        .fixture {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--primary-color);
-            display: flex;
-            align-items: center;
             justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            color: var(--primary-color);
-        }
-        
-        .fixture:hover {
-            background: rgba(0, 255, 0, 0.2);
-            box-shadow: 0 0 10px var(--primary-color);
-        }
-        
-        /* Dashboard Content Container */
-        .dashboard-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-            min-height: 0;
-        }
-        
-        /* Menu Top Fixtures */
-        .menu-top-fixtures {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-        }
-        
-        .menu-fixture {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--primary-color);
-            display: flex;
             align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            color: var(--primary-color);
-        }
-        
-        .menu-fixture:hover {
-            background: rgba(0, 255, 0, 0.2);
-            box-shadow: 0 0 10px var(--primary-color);
-        }
-        
-        /* Quick Actions */
-        .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin: 15px 0;
-        }
-        
-        .quick-action {
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--primary-color);
-            border-radius: 5px;
-            padding: 10px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .quick-action:hover {
-            background: rgba(0, 255, 0, 0.1);
-            box-shadow: 0 0 8px var(--primary-color);
-        }
-        
-        .action-icon {
-            font-size: 20px;
-            color: var(--primary-color);
-            margin-bottom: 5px;
-        }
-        
-        .action-label {
-            font-size: 10px;
-            color: var(--light-color);
-        }
-        
-        /* Admin Panel Styles */
-        .admin-panel {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: var(--dark-color);
-            border: 2px solid var(--primary-color);
-            border-radius: 10px;
-            padding: 20px;
-            width: 90%;
-            max-width: 800px;
-            max-height: 80vh;
-            overflow-y: auto;
-            z-index: 2000;
-            display: none;
-            box-shadow: 0 0 30px rgba(0, 255, 0, 0.5);
-        }
-        
-        .admin-panel.active {
-            display: block;
-        }
-        
-        .admin-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 1999;
-            display: none;
-        }
-        
-        .admin-overlay.active {
-            display: block;
-        }
-        
-        .admin-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--primary-color);
-        }
-        
-        .admin-header h3 {
+            font-size: 14px;
             color: var(--primary-color);
-            margin: 0;
         }
         
-        .close-admin {
-            color: var(--primary-color);
-            font-size: 24px;
-            cursor: pointer;
-            background: none;
-            border: none;
+        .loading i {
+            margin-right: 10px;
+            animation: spin 1s linear infinite;
         }
         
-        .admin-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         
-        .admin-stat {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 15px;
-            border-radius: 5px;
-            text-align: center;
-            border: 1px solid var(--primary-color);
+        /* SCROLLBAR */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
         }
         
-        .admin-stat-value {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--primary-color);
-            margin: 5px 0;
+        ::-webkit-scrollbar-track {
+            background: var(--dark-color);
         }
         
-        .admin-stat-label {
-            font-size: 12px;
-            color: var(--light-color);
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
         }
         
-        .users-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        
-        .users-table th {
-            background: rgba(0, 255, 0, 0.1);
-            color: var(--primary-color);
-            padding: 10px;
-            text-align: left;
-            font-size: 12px;
-            border-bottom: 1px solid var(--primary-color);
-        }
-        
-        .users-table td {
-            padding: 8px;
-            font-size: 11px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .users-table tr:hover {
-            background: rgba(0, 255, 0, 0.05);
-        }
-        
-        .secret-admin-link {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            opacity: 0;
-            pointer-events: none;
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary-color);
         }
     </style>
 </head>
 <body>
-    <!-- Admin Panel -->
-    <div class="admin-overlay" id="adminOverlay"></div>
-    <div class="admin-panel" id="adminPanel">
-        <div class="admin-header">
-            <h3>FX BULLS PRO - ADMIN PANEL</h3>
-            <button class="close-admin" id="closeAdmin">&times;</button>
-        </div>
-        
-        <div class="admin-stats">
-            <div class="admin-stat">
-                <div class="admin-stat-label">Total Users</div>
-                <div class="admin-stat-value" id="totalUsers">0</div>
-            </div>
-            <div class="admin-stat">
-                <div class="admin-stat-label">Active Today</div>
-                <div class="admin-stat-value" id="activeUsers">0</div>
-            </div>
-            <div class="admin-stat">
-                <div class="admin-stat-label">Revenue (R)</div>
-                <div class="admin-stat-value" id="totalRevenue">0</div>
-            </div>
-        </div>
-        
-        <div class="admin-stat">
-            <div class="admin-stat-label">Signal Accuracy (Last 24h)</div>
-            <div class="admin-stat-value" id="signalAccuracy">-</div>
-        </div>
-        
-        <h4 style="color: var(--primary-color); margin: 20px 0 10px 0;">REGISTERED USERS</h4>
-        <div style="overflow-x: auto;">
-            <table class="users-table">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Trading Style</th>
-                        <th>License Key</th>
-                        <th>Registered Date</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody id="usersTableBody">
-                    <tr>
-                        <td colspan="7" style="text-align: center;">No users registered yet</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        
-        <div style="margin-top: 20px; text-align: center;">
-            <button onclick="exportUserData()" style="background: var(--primary-color); color: black; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
-                <i class="fas fa-download"></i> EXPORT USER DATA
-            </button>
-        </div>
-    </div>
-
-    <!-- Hamburger Menu Overlay -->
-    <div class="menu-overlay" id="menuOverlay"></div>
-    
-    <!-- Hamburger Menu Content -->
-    <div class="menu-content" id="menuContent">
-        <div class="close-menu" id="closeMenu">&times;</div>
-        
-        <div class="menu-header">
-            <h3>FX BULLS PRO</h3>
-            <div style="font-size: 12px; color: #ccc;">PROFESSIONAL EDITION</div>
-            
-            <!-- Menu Top Fixtures -->
-            <div class="menu-top-fixtures">
-                <div class="menu-fixture" title="Market Overview" onclick="showMarketOverview()">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <div class="menu-fixture" title="Signal History" onclick="showSignalHistory()">
-                    <i class="fas fa-history"></i>
-                </div>
-                <div class="menu-fixture" title="Settings" onclick="showSettings()">
-                    <i class="fas fa-cog"></i>
-                </div>
-                <div class="menu-fixture" title="Secret Admin" onclick="openAdminPanel()">
-                    <i class="fas fa-user-secret"></i>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Registration Status in Menu -->
-        <div class="menu-section">
-            <h4>ACCOUNT STATUS</h4>
-            <div class="user-detail">
-                <strong>Status:</strong> 
-                <span id="menuStatusText" style="color: var(--danger-color);">NOT REGISTERED</span>
-            </div>
-            <div class="user-detail">
-                <strong>License Type:</strong> <span id="licenseType">-</span>
-            </div>
-            <div class="user-detail">
-                <strong>Expiry:</strong> <span id="licenseExpiry">LIFETIME</span>
-            </div>
-            <div class="user-detail">
-                <strong>Signals Generated:</strong> <span id="signalsCount">0</span>
-            </div>
-        </div>
-        
-        <!-- User Details Section -->
-        <div class="menu-section">
-            <h4>USER DETAILS</h4>
-            <div class="user-detail">
-                <strong>Name:</strong> <span id="menuUserName">Not logged in</span>
-            </div>
-            <div class="user-detail">
-                <strong>Email:</strong> <span id="menuUserEmail">-</span>
-            </div>
-            <div class="user-detail">
-                <strong>Trading Style:</strong> <span id="menuTradingStyle">-</span>
-            </div>
-            <div class="user-detail">
-                <strong>Member Since:</strong> <span id="menuMemberSince">-</span>
-            </div>
-            
-            <button class="change-style-btn" id="changeStyleBtn">
-                <i class="fas fa-exchange-alt" style="margin-right: 5px;"></i> CHANGE TRADING STYLE
-            </button>
-            
-            <div class="style-options" id="styleOptions">
-                <div class="style-option" data-style="scalping">
-                    <input type="radio" id="styleScalping" name="tradingStyle" value="scalping">
-                    <label for="styleScalping">Scalping (1-15 min timeframe)</label>
-                </div>
-                <div class="style-option" data-style="day">
-                    <input type="radio" id="styleDay" name="tradingStyle" value="day">
-                    <label for="styleDay">Day Trading (1-4 hour timeframe)</label>
-                </div>
-                <div class="style-option" data-style="swing">
-                    <input type="radio" id="styleSwing" name="tradingStyle" value="swing">
-                    <label for="styleSwing">Swing Trading (4 hour-daily timeframe)</label>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Trading Session Section -->
-        <div class="menu-section">
-            <h4>TRADING SESSION</h4>
-            <div class="session-indicator">
-                <div style="display: flex; align-items: center;">
-                    <div class="session-dot" id="sessionDot"></div>
-                    <span id="sessionStatus">Checking...</span>
-                </div>
-                <div id="sessionTime" style="font-size: 11px;">--:--</div>
-            </div>
-            <div class="user-detail">
-                <strong>Current Session:</strong> <span id="currentSession">-</span>
-            </div>
-            <div class="user-detail">
-                <strong>Session Type:</strong> <span id="sessionType">-</span>
-            </div>
-            <div class="user-detail">
-                <strong>Volatility:</strong> <span id="sessionVolatility">-</span>
-            </div>
-        </div>
-        
-        <!-- Signal Confidence Section -->
-        <div class="menu-section">
-            <h4>SIGNAL CONFIDENCE</h4>
-            <div class="user-detail">
-                <strong>Current Signal:</strong> <span id="menuCurrentSignal">-</span>
-            </div>
-            <div class="user-detail">
-                <strong>Confidence Level:</strong> <span id="confidenceLevel">-</span>
-            </div>
-            <div class="confidence-meter">
-                <div class="confidence-fill" id="confidenceFill" style="width: 0%"></div>
-            </div>
-            <div class="user-detail">
-                <strong>Analysis:</strong> <span id="signalAnalysis">-</span>
-            </div>
-        </div>
-        
-        <!-- Quick Actions -->
-        <div class="menu-section">
-            <h4>QUICK ACTIONS</h4>
-            <div class="quick-actions">
-                <div class="quick-action" onclick="quickAction('analyze')">
-                    <div class="action-icon">
-                        <i class="fas fa-search"></i>
-                    </div>
-                    <div class="action-label">Analyze Pair</div>
-                </div>
-                <div class="quick-action" onclick="quickAction('risk')">
-                    <div class="action-icon">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <div class="action-label">Risk Check</div>
-                </div>
-                <div class="quick-action" onclick="quickAction('trend')">
-                    <div class="action-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <div class="action-label">Trend Analysis</div>
-                </div>
-                <div class="quick-action" onclick="quickAction('settings')">
-                    <div class="action-icon">
-                        <i class="fas fa-cog"></i>
-                    </div>
-                    <div class="action-label">Settings</div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Signal History Section -->
-        <div class="menu-section">
-            <h4>SIGNAL HISTORY (LAST 10)</h4>
-            <div id="signalHistoryList" style="max-height: 200px; overflow-y: auto;">
-                <div class="signal-history-item">
-                    <div>No signals yet</div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Menu Footer -->
-        <div style="text-align: center; margin-top: 20px; font-size: 10px; color: #888;">
-            <div>FX Bulls PRO v4.0</div>
-            <div>© 2024 All rights reserved</div>
-        </div>
-    </div>
-
-    <!-- Top Right Fixtures -->
-    <div class="top-fixtures">
-        <div class="fixture" title="Market Overview" onclick="showMarketOverview()">
-            <i class="fas fa-globe"></i>
-        </div>
-        <div class="fixture" title="Economic Calendar" onclick="showEconomicCalendar()">
-            <i class="fas fa-calendar-alt"></i>
-        </div>
-        <div class="fixture" title="News Feed" onclick="showNewsFeed()">
-            <i class="fas fa-newspaper"></i>
-        </div>
-        <div class="fixture" title="Alerts" onclick="showAlerts()">
-            <i class="fas fa-bell"></i>
-        </div>
-    </div>
-
-    <!-- Registration Status Indicator -->
-    <div class="status-indicator" id="statusIndicator">
-        <div class="status-dot inactive" id="statusDot"></div>
-        <div class="status-text" id="statusText">NOT REGISTERED</div>
-    </div>
-
-    <div class="container">
-        <div class="card">
-            <div class="card-header">
-                <!-- Hamburger Menu Button -->
-                <div class="hamburger-menu" id="hamburgerMenu">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
+    <!-- Login Modal -->
+    <div class="login-modal" id="loginModal">
+        <div class="login-box">
+            <div class="login-header">
                 <h2>FX BULLS PRO</h2>
+                <p style="color: var(--light-color);">Trading Terminal v3.0</p>
             </div>
-            <div class="card-body">
-                <!-- Login Form -->
-                <div id="login-container">
-                    <h2 style="text-align: center; margin-bottom: 20px; color: var(--primary-color);">MEMBER LOGIN</h2>
-                    
-                    <div id="login-form">
-                        <div class="form-group">
-                            <label for="loginEmail">EMAIL</label>
-                            <input id="loginEmail" type="email" placeholder="Your registered email" />
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="loginPassword">PASSWORD</label>
-                            <input id="loginPassword" type="password" placeholder="Your password" />
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="loginLicenseKey">LICENSE KEY</label>
-                            <input id="loginLicenseKey" placeholder="Enter your license key" />
-                        </div>
-                        
-                        <button id="loginBtn" class="success">LOGIN</button>
-                        
-                        <div class="form-toggle">
-                            Don't have an account? <a id="showRegister">Register here</a>
-                            <br>
-                            <a id="goToLogin" style="background: rgba(0, 255, 0, 0.2); padding: 8px 15px; border-radius: 5px; display: inline-block; margin-top: 10px;">
-                                <strong>PRESS HERE TO LOGIN</strong>
-                            </a>
-                        </div>
-                    </div>
-                    
-                    <!-- Registration Form -->
-                    <div id="register-form" class="hidden">
-                        <div class="activation-message">
-                            <strong>ACCOUNT VERIFICATION REQUIRED</strong>
-                            <p>Pay R200 to get your activation code</p>
-                            <p>LIFETIME ACCESS • ONE-TIME PAYMENT</p>
-                        </div>
-                        
-                        <!-- Pay Now Button -->
-                        <div class="pay-now-container">
-                            <button id="payNowButton" class="pay-now-btn" onclick="window.open('https://pay.yoco.com/fx-bulls-pro', '_blank')">
-                                <i class="fas fa-lock"></i> PAY NOW R300 TO GET ACTIVATION CODE
-                            </button>
-                            
-                            <div class="pay-instructions">
-                                <h4>HOW TO GET ACTIVATION CODE</h4>
-                                <p>1. Click "PAY NOW" button above</p>
-                                <p>2. Complete R200 payment via secure link</p>
-                                <p>3. WhatsApp proof of payment to 067 277 1746</p>
-                                <p>4. You will receive your activation code via WhatsApp</p>
-                                <p>5. Enter the code below to complete registration</p>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="regName">FULL NAME</label>
-                            <input id="regName" placeholder="Your full name" />
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="regEmail">EMAIL</label>
-                            <input id="regEmail" type="email" placeholder="Your email address" />
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="regPassword">PASSWORD</label>
-                            <input id="regPassword" type="password" placeholder="Create a password" />
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="regConfirmPassword">CONFIRM PASSWORD</label>
-                            <input id="regConfirmPassword" type="password" placeholder="Confirm your password" />
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="tradingStyle">TRADING STYLE</label>
-                            <select id="tradingStyle">
-                                <option value="scalping">Scalping (1-15 min timeframe)</option>
-                                <option value="day">Day Trading (1-4 hour timeframe)</option>
-                                <option value="swing">Swing Trading (4 hour-daily timeframe)</option>
-                            </select>
-                        </div>
-                        
-                        <div id="activation-code-form" class="activation-code-form">
-                            <div class="form-group">
-                                <label for="activationCode">ACTIVATION CODE</label>
-                                <input id="activationCode" placeholder="Enter activation code from mentor" />
-                            </div>
-                        </div>
-                        
-                        <button id="registerBtn" class="success">COMPLETE REGISTRATION</button>
-                        
-                        <div class="form-toggle">
-                            Already have an account? <a id="showLogin">Login here</a>
-                            <br>
-                            <a id="goToLogin2" style="background: rgba(0, 255, 0, 0.2); padding: 8px 15px; border-radius: 5px; display: inline-block; margin-top: 10px;">
-                                <strong>PRESS HERE TO LOGIN</strong>
-                            </a>
-                        </div>
-                    </div>
-                    
-                    <!-- License Key Display -->
-                    <div id="license-key-display" class="license-key-display hidden">
-                        <h4>YOUR LICENSE KEY</h4>
-                        <p>Save this key - you'll need it to login</p>
-                        <div class="license-key" id="generated-license-key"></div>
-                        <p>You can now <a id="goToLogin3" style="color: var(--primary-color); text-decoration: underline; font-weight: bold; cursor: pointer;">PRESS "HERE" TO LOGIN</a></p>
-                    </div>
+            
+            <div id="loginForm">
+                <div class="form-group">
+                    <div class="form-label">EMAIL</div>
+                    <input type="email" class="form-input" id="loginEmail" placeholder="Your registered email">
                 </div>
-
-                <!-- Dashboard -->
-                <div id="dashboard" class="hidden">
-                    <div class="dashboard-content">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                            <h3 style="color: var(--primary-color); margin: 0;">WELCOME, <span id="userNameDisplay"></span></h3>
-                            <button id="logoutBtn" class="danger">LOGOUT</button>
-                        </div>
-                        
-                        <div class="trading-style-info">
-                            <strong>TRADING STYLE: </strong><span id="userTradingStyleDisplay"></span>
-                        </div>
-                        
-                        <!-- Market Status Bar -->
-                        <div class="market-status">
-                            <div class="market-status-item">
-                                <div class="market-status-label">Market Status</div>
-                                <div class="market-status-value" id="marketStatus">Loading...</div>
-                                <div class="volatility-indicator">
-                                    <div class="volatility-fill volatility-low" id="volatilityIndicator"></div>
-                                </div>
-                            </div>
-                            <div class="market-status-item">
-                                <div class="market-status-label">Best Session</div>
-                                <div class="market-status-value" id="bestSession">-</div>
-                            </div>
-                            <div class="market-status-item">
-                                <div class="market-status-label">Risk Level</div>
-                                <div class="market-status-value" id="riskLevel">-</div>
-                            </div>
-                        </div>
-                        
-                        <!-- Trading Session Info -->
-                        <div class="session-container">
-                            <div class="session-header">
-                                <div class="session-title">TRADING SESSION</div>
-                                <div class="session-status">
-                                    <div class="session-dot" id="dashboardSessionDot"></div>
-                                    <span id="dashboardSessionStatus">Checking...</span>
-                                </div>
-                            </div>
-                            <div class="session-info">
-                                <div class="session-item" id="sessionLondon">
-                                    <div class="session-label">London Session</div>
-                                    <div class="session-value">10:00 - 19:00</div>
-                                </div>
-                                <div class="session-item" id="sessionNY">
-                                    <div class="session-label">New York Session</div>
-                                    <div class="session-value">15:00 - 24:00</div>
-                                </div>
-                                <div class="session-item" id="sessionAsia">
-                                    <div class="session-label">Asian Session</div>
-                                    <div class="session-value">00:00 - 09:00</div>
-                                </div>
-                                <div class="session-item">
-                                    <div class="session-label">Current Time</div>
-                                    <div class="session-value" id="currentTime">--:--</div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="pairSelect">SELECT TRADING PAIR</label>
-                            <select id="pairSelect">
-                                <option value="EUR/USD">EUR/USD</option>
-                                <option value="GBP/USD">GBP/USD</option>
-                                <option value="USD/JPY">USD/JPY</option>
-                                <option value="AUD/USD">AUD/USD</option>
-                                <option value="USD/CAD">USD/CAD</option>
-                                <option value="BTC/USD" class="bitcoin">BTC/USD (BITCOIN)</option>
-                                <option value="XAU/USD" class="gold">XAU/USD (GOLD)</option>
-                            </select>
-                        </div>
-                        
-                        <!-- Enhanced Signal Container with Confidence -->
-                        <div class="signal-container">
-                            <div class="signal-header">
-                                <div class="signal-pair" id="signal-pair">EUR/USD</div>
-                                <div class="signal-direction" id="signal-direction">LOADING...</div>
-                            </div>
-                            
-                            <!-- Confidence Display -->
-                            <div class="signal-confidence">
-                                <span style="font-size: 12px;">Confidence:</span>
-                                <div class="confidence-meter">
-                                    <div class="confidence-fill" id="signalConfidenceFill"></div>
-                                </div>
-                                <div class="confidence-value" id="signalConfidenceValue">-</div>
-                            </div>
-                            
-                            <div id="signal-message" style="font-size: 14px; margin-bottom: 10px;">
-                                <div style="display: flex; justify-content: center; align-items: center; height: 30px;">
-                                    <div class="spinner" style="width: 18px; height: 18px; border-width: 3px;"></div>
-                                    <span style="margin-left: 8px;">ANALYZING MARKET DATA...</span>
-                                </div>
-                            </div>
-                            
-                            <div class="signal-details">
-                                <div class="signal-detail">
-                                    <div class="detail-label">ENTRY PRICE</div>
-                                    <div class="detail-value" id="entry-price">-</div>
-                                </div>
-                                <div class="signal-detail">
-                                    <div class="detail-label">TAKE PROFIT</div>
-                                    <div class="detail-value" id="take-profit">-</div>
-                                </div>
-                                <div class="signal-detail">
-                                    <div class="detail-label">STOP LOSS</div>
-                                    <div class="detail-value" id="stop-loss">-</div>
-                                </div>
-                            </div>
-                            
-                            <!-- Signal Analysis -->
-                            <div style="margin-top: 10px; font-size: 12px; color: var(--light-color);">
-                                <strong>Analysis:</strong> <span id="signalAnalysisText">Waiting for analysis...</span>
-                            </div>
-                        </div>
-                        
-                        <div class="chart-container">
-                            <iframe id="chartIframe"></iframe>
-                        </div>
-                        
-                        <div style="text-align: center; margin-bottom: 15px;">
-                            <button id="refreshBtn" class="refresh-btn">
-                                <i class="fas fa-sync-alt"></i> REFRESH SIGNAL
-                            </button>
-                        </div>
-                        
-                        <div class="powered-by">
-                            <i class="fas fa-bolt" style="color: var(--primary-color); margin-right: 5px;"></i>
-                            POWERED BY FX BULLS PRO
-                            <i class="fas fa-bolt" style="color: var(--primary-color); margin-left: 5px;"></i>
-                        </div>
-                    </div>
+                
+                <div class="form-group">
+                    <div class="form-label">PASSWORD</div>
+                    <input type="password" class="form-input" id="loginPassword" placeholder="Your password">
                 </div>
-
-                <!-- Owner Information -->
-                <div class="owner-info">
-                    <h4>FX BULLS PRO - PROFESSIONAL EDITION V4.0</h4>
-                    <p><strong>OWNER:</strong> MFANOLA HAPE</p>
-                    <p><strong>CONTACT:</strong> 067 277 1746</p>
-                    <p><strong>EMAIL:</strong> fxbulls1632@gmail.com</p>
-                    <p><strong>MEMBERSHIP:</strong> R200 LIFETIME ACCESS</p>
+                
+                <div class="form-group">
+                    <div class="form-label">LICENSE KEY</div>
+                    <input type="text" class="form-input" id="loginLicenseKey" placeholder="Enter your license key">
+                </div>
+                
+                <div class="form-buttons">
+                    <button class="form-btn primary" id="loginBtn">LOGIN</button>
+                    <button class="form-btn secondary" id="showRegisterBtn">REGISTER</button>
+                </div>
+                
+                <div class="form-toggle">
+                    Don't have an account? <a id="showRegisterLink">Register here</a>
+                </div>
+            </div>
+            
+            <div id="registerForm" class="hidden">
+                <div style="background: rgba(0, 255, 0, 0.1); padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid var(--primary-color);">
+                    <div style="text-align: center; color: var(--primary-color); font-weight: bold; margin-bottom: 10px;">
+                        <i class="fas fa-lock"></i> PREMIUM ACCESS REQUIRED
+                    </div>
+                    <p style="font-size: 14px; text-align: center; color: var(--light-color);">
+                        Pay R200 for lifetime access<br>
+                        WhatsApp proof to 067 277 1746
+                    </p>
+                </div>
+                
+                <div class="form-group">
+                    <div class="form-label">FULL NAME</div>
+                    <input type="text" class="form-input" id="regName" placeholder="Your full name">
+                </div>
+                
+                <div class="form-group">
+                    <div class="form-label">EMAIL</div>
+                    <input type="email" class="form-input" id="regEmail" placeholder="Your email address">
+                </div>
+                
+                <div class="form-group">
+                    <div class="form-label">PASSWORD</div>
+                    <input type="password" class="form-input" id="regPassword" placeholder="Create a password">
+                </div>
+                
+                <div class="form-group">
+                    <div class="form-label">TRADING STRATEGY</div>
+                    <select class="form-input" id="tradingStrategy">
+                        <option value="scalping">Scalping (1-15 min timeframe)</option>
+                        <option value="day">Day Trading (1-4 hour timeframe)</option>
+                        <option value="swing">Swing Trading (4 hour-daily timeframe)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <div class="form-label">ACTIVATION CODE</div>
+                    <input type="text" class="form-input" id="activationCode" placeholder="Enter activation code">
+                </div>
+                
+                <div class="form-buttons">
+                    <button class="form-btn primary" id="registerBtn">COMPLETE REGISTRATION</button>
+                    <button class="form-btn secondary" id="showLoginBtn">BACK TO LOGIN</button>
+                </div>
+            </div>
+            
+            <div id="licenseDisplay" class="hidden">
+                <div class="license-display">
+                    <h4 style="color: var(--primary-color); margin-bottom: 10px;">YOUR LICENSE KEY</h4>
+                    <p style="color: var(--light-color); margin-bottom: 15px;">Save this key - you'll need it to login</p>
+                    <div class="license-key" id="generatedLicenseKey"></div>
+                    <p style="color: var(--light-color); margin-top: 15px; font-size: 14px;">
+                        You can now <a id="goToLoginBtn" style="color: var(--primary-color); cursor: pointer; font-weight: bold;">click here to login</a>
+                    </p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Secret Admin Link (Hidden) -->
-    <a href="#" id="secretAdminLink" class="secret-admin-link" onclick="openAdminPanelWithCode(event)"></a>
+    <!-- MT5 Interface -->
+    <div class="mt5-menu">
+        <div class="mt5-menu-tabs">
+            <div class="menu-tab active" data-tab="quotes">
+                <i class="fas fa-chart-line"></i> QUOTES
+            </div>
+            <div class="menu-tab" data-tab="chart">
+                <i class="fas fa-chart-bar"></i> CHART
+            </div>
+            <div class="menu-tab" data-tab="trade">
+                <i class="fas fa-trade"></i> TRADE
+            </div>
+            <div class="menu-tab" data-tab="history">
+                <i class="fas fa-history"></i> HISTORY
+            </div>
+            <div class="menu-tab" data-tab="settings">
+                <i class="fas fa-cog"></i> SETTINGS
+            </div>
+        </div>
+        <div class="mt5-logo">FX BULLS PRO</div>
+    </div>
+    
+    <div class="mt5-container">
+        <!-- Quotes Panel -->
+        <div class="quotes-panel" id="quotesPanel">
+            <div class="panel-header">
+                <span>MARKET WATCH</span>
+                <i class="fas fa-sync-alt" id="refreshQuotes"></i>
+            </div>
+            <div class="pairs-list" id="pairsList">
+                <div class="loading">
+                    <i class="fas fa-spinner"></i> Loading market data...
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="tab-content">
+                <!-- Quotes Tab -->
+                <div class="tab-pane active" id="quotesTab">
+                    <div class="chart-container">
+                        <div class="chart-controls">
+                            <button class="chart-btn" id="zoomIn"><i class="fas fa-search-plus"></i></button>
+                            <button class="chart-btn" id="zoomOut"><i class="fas fa-search-minus"></i></button>
+                        </div>
+                        <iframe class="chart-frame" id="mainChart"></iframe>
+                    </div>
+                </div>
+                
+                <!-- Chart Tab -->
+                <div class="tab-pane" id="chartTab">
+                    <div class="chart-container">
+                        <div class="chart-controls">
+                            <button class="chart-btn" data-tf="15">15M</button>
+                            <button class="chart-btn" data-tf="60">1H</button>
+                            <button class="chart-btn" data-tf="240">4H</button>
+                            <button class="chart-btn" data-tf="1440">D</button>
+                            <button class="chart-btn" id="zoomIn2"><i class="fas fa-search-plus"></i></button>
+                            <button class="chart-btn" id="zoomOut2"><i class="fas fa-search-minus"></i></button>
+                        </div>
+                        <iframe class="chart-frame" id="chartTabFrame"></iframe>
+                    </div>
+                </div>
+                
+                <!-- Trade Tab -->
+                <div class="tab-pane" id="tradeTab">
+                    <div class="trade-container">
+                        <div class="trade-left">
+                            <div class="signal-box">
+                                <div class="signal-header">
+                                    <div class="signal-pair" id="tradePair">EUR/USD</div>
+                                    <div class="signal-direction buy" id="tradeDirection">BUY</div>
+                                </div>
+                                
+                                <div class="signal-details">
+                                    <div class="signal-detail">
+                                        <div class="detail-label">Entry Price</div>
+                                        <div class="detail-value" id="entryPrice">--</div>
+                                    </div>
+                                    <div class="signal-detail">
+                                        <div class="detail-label">Stop Loss</div>
+                                        <div class="detail-value" id="stopLoss">--</div>
+                                    </div>
+                                    <div class="signal-detail">
+                                        <div class="detail-label">Risk/Reward</div>
+                                        <div class="detail-value" id="riskReward">1:2</div>
+                                    </div>
+                                    <div class="signal-detail">
+                                        <div class="detail-label">Signal Strength</div>
+                                        <div class="detail-value" id="signalStrength">High</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="tp-levels">
+                                    <div class="tp-level">
+                                        <div class="tp-label">Take Profit 1</div>
+                                        <div class="tp-value" id="tp1">--</div>
+                                    </div>
+                                    <div class="tp-level">
+                                        <div class="tp-label">Take Profit 2</div>
+                                        <div class="tp-value" id="tp2">--</div>
+                                    </div>
+                                    <div class="tp-level">
+                                        <div class="tp-label">Take Profit 3</div>
+                                        <div class="tp-value" id="tp3">--</div>
+                                    </div>
+                                </div>
+                                
+                                <div style="margin-top: 20px; font-size: 12px; color: var(--light-color); text-align: center;">
+                                    <i class="fas fa-info-circle"></i> Signal based on real market data from Twelve Data API
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="trade-right">
+                            <div class="trade-controls">
+                                <button class="trade-btn buy" id="executeBuy">
+                                    <i class="fas fa-arrow-up"></i> EXECUTE BUY
+                                </button>
+                                <button class="trade-btn sell" id="executeSell">
+                                    <i class="fas fa-arrow-down"></i> EXECUTE SELL
+                                </button>
+                                <button class="refresh-btn" id="refreshSignal">
+                                    <i class="fas fa-sync-alt"></i> GENERATE NEW SIGNAL
+                                </button>
+                                <div style="margin-top: 10px; font-size: 11px; color: var(--light-color); text-align: center;">
+                                    <i class="fas fa-database"></i> Using real-time market data
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- History Tab -->
+                <div class="tab-pane" id="historyTab">
+                    <div class="history-container">
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Pair</th>
+                                    <th>Direction</th>
+                                    <th>Entry</th>
+                                    <th>TP1</th>
+                                    <th>TP2</th>
+                                    <th>TP3</th>
+                                    <th>SL</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTableBody">
+                                <tr>
+                                    <td colspan="9" style="text-align: center; padding: 40px; color: var(--light-color);">
+                                        Loading history...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Settings Tab -->
+                <div class="tab-pane" id="settingsTab">
+                    <div class="settings-container">
+                        <!-- Account Details -->
+                        <div class="settings-section">
+                            <div class="section-header">
+                                <i class="fas fa-user"></i> ACCOUNT DETAILS
+                            </div>
+                            <div class="user-info" id="accountDetails">
+                                <div class="info-row">
+                                    <span class="info-label">Status</span>
+                                    <span class="info-value" style="color: var(--danger-color);">Not Logged In</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Trading Strategy -->
+                        <div class="settings-section">
+                            <div class="section-header">
+                                <i class="fas fa-chess"></i> TRADING STRATEGY
+                            </div>
+                            <div class="strategy-options" id="strategyOptions">
+                                <div class="strategy-option" data-strategy="scalping">
+                                    <input type="radio" name="strategy" id="strategyScalping" value="scalping">
+                                    <label for="strategyScalping">Scalping (1-15 min timeframe)</label>
+                                </div>
+                                <div class="strategy-option" data-strategy="day">
+                                    <input type="radio" name="strategy" id="strategyDay" value="day">
+                                    <label for="strategyDay">Day Trading (1-4 hour timeframe)</label>
+                                </div>
+                                <div class="strategy-option" data-strategy="swing">
+                                    <input type="radio" name="strategy" id="strategySwing" value="swing">
+                                    <label for="strategySwing">Swing Trading (4 hour-daily timeframe)</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Current Sessions -->
+                        <div class="settings-section">
+                            <div class="section-header">
+                                <i class="fas fa-clock"></i> CURRENT SESSIONS
+                            </div>
+                            <div class="session-info" id="sessionInfo">
+                                <div class="session-item">
+                                    <span>Current Session:</span>
+                                    <span style="color: var(--primary-color); font-weight: bold;">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- System Status -->
+                        <div class="settings-section">
+                            <div class="section-header">
+                                <i class="fas fa-server"></i> SYSTEM STATUS
+                            </div>
+                            <div class="user-info">
+                                <div class="info-row">
+                                    <span class="info-label">API Status</span>
+                                    <span class="info-value" id="apiStatus" style="color: var(--primary-color);">Connecting...</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Signal Engine</span>
+                                    <span class="info-value" id="engineStatus" style="color: var(--primary-color);">Initializing</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Last Update</span>
+                                    <span class="info-value" id="lastUpdate">-</span>
+                                </div>
+                                <button class="logout-btn" id="logoutBtn">
+                                    <i class="fas fa-sign-out-alt"></i> LOGOUT
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div class="status-item">
+            <div class="status-dot disconnected" id="connectionDot"></div>
+            <span id="connectionStatus">Connecting to market data...</span>
+        </div>
+        <div class="status-item">
+            <i class="fas fa-clock"></i>
+            <span id="currentTime">--:--:--</span>
+        </div>
+        <div class="status-item">
+            <i class="fas fa-chart-bar"></i>
+            <span id="currentSession">Market: --</span>
+        </div>
+        <div class="status-item" style="margin-left: auto;">
+            <i class="fas fa-user"></i>
+            <span id="userStatus">Not logged in</span>
+        </div>
+    </div>
 
     <script>
-        // Enhanced Configuration with Security
+        // Configuration with Twelve Data API
         const config = {
             apiKey: "6600e1f557684ab5a3f57465b24f38d4",
+            twelveDataApiKey: "6600e1f557684ab5a3f57465b24f38d4",
+            baseURL: "https://api.twelvedata.com",
+            
+            // Symbol mapping for Twelve Data
+            symbolMapping: {
+                "EUR/USD": "EUR/USD",
+                "GBP/USD": "GBP/USD", 
+                "USD/JPY": "USD/JPY",
+                "AUD/USD": "AUD/USD",
+                "USD/CAD": "USD/CAD",
+                "BTC/USD": "BTC/USD",
+                "XAU/USD": "XAU/USD"
+            },
+            
             pipValues: {
                 "EUR/USD": 0.0001,
                 "GBP/USD": 0.0001,
@@ -1612,1475 +1143,977 @@
                 "BTC/USD": 1,
                 "XAU/USD": 0.1
             },
-            // Enhanced trading style configurations
-            tradingStyles: {
-                scalping: {
-                    tpMultiplier: 1.5,
-                    slMultiplier: 0.8,
-                    timeframe: "15",
-                    maxPips: 1500,
-                    minPips: 1000,
-                    aggressiveness: 0.8
-                },
-                day: {
-                    tpMultiplier: 3.0,
-                    slMultiplier: 1.0,
-                    timeframe: "60",
-                    maxPips: 2000,
-                    minPips: 1200,
-                    aggressiveness: 0.6
-                },
-                swing: {
-                    tpMultiplier: 5.0,
-                    slMultiplier: 1.5,
-                    timeframe: "240",
-                    maxPips: 2500,
-                    minPips: 1500,
-                    aggressiveness: 0.4
-                }
+            
+            tradingStrategies: {
+                scalping: { timeframe: "15", tpMultiplier: 1.2, slMultiplier: 0.6, riskReward: "1:1.5" },
+                day: { timeframe: "60", tpMultiplier: 2.0, slMultiplier: 1.0, riskReward: "1:2" },
+                swing: { timeframe: "240", tpMultiplier: 3.0, slMultiplier: 1.5, riskReward: "1:3" }
             },
             
-            // SECRET ACTIVATION CODES - ENCRYPTED
-            activationCodes: [
-                "FB2024SECRET1",  // Secret code 1
-                "BULLSMAGIC2",     // Secret code 2  
-                "TRADERSECRET3",   // Secret code 3
-                "FXHIDDEN4",       // Secret code 4
-                "PROFITKEY@1"       // Secret code 5
-            ],
-            
-            // ADMIN ACCESS CODE
-            adminCode: "200607",
-            
-            // Enhanced session configurations
-            sessions: {
-                asia: { start: 0, end: 9, name: "Asian", color: "var(--session-asia)" },
-                london: { start: 10, end: 19, name: "London", color: "var(--session-london)" },
-                ny: { start: 15, end: 24, name: "New York", color: "var(--session-ny)" }
-            },
-            
-            // Security settings
-            security: {
-                maxLoginAttempts: 5,
-                sessionTimeout: 3600000, // 1 hour
-                encryptionKey: "FXBULLS2024PROSECURE"
-            }
+            activationCodes: ["FXBULLS#$-BDC-7-YN-ld0-as-09", "TRAD@54-PROFX-JG", "PROFX56-OIJM7", "BULLS--0980", "ACTIVATE-09-878-HF"]
         };
 
-        // Generate 1000 unique license keys with enhanced security
-        function generateLicenseKeys(count) {
-            const keys = [];
-            const usedKeys = new Set();
-            
-            for (let i = 0; i < count; i++) {
-                let key;
-                do {
-                    // Enhanced key generation with more entropy
-                    const timestamp = Date.now().toString(36);
-                    const random = Math.random().toString(36).substring(2, 8);
-                    const segments = [
-                        "FX" + random.substring(0, 2).toUpperCase(),
-                        timestamp.substring(timestamp.length - 4).toUpperCase(),
-                        Math.random().toString(36).substring(2, 6).toUpperCase(),
-                        "PRO"
-                    ];
-                    key = segments.join('-');
-                } while (usedKeys.has(key));
-                
-                usedKeys.add(key);
-                keys.push(key);
-            }
-            return keys;
-        }
-
-        // Initialize with 1000 license keys
-        const licenseKeys = generateLicenseKeys(1000);
-        let availableKeys = [...licenseKeys];
-        let usedKeys = {};
-
-        // User database with enhanced security
+        // Data
         const userDatabase = {};
-        let loginAttempts = {};
+        const signalHistory = [];
+        let currentUser = null;
+        let currentPair = "EUR/USD";
+        let currentStrategy = "day";
+        let marketPairs = [
+            { symbol: "EUR/USD", name: "EUR/USD", price: 0, change: 0, previousClose: 0 },
+            { symbol: "GBP/USD", name: "GBP/USD", price: 0, change: 0, previousClose: 0 },
+            { symbol: "USD/JPY", name: "USD/JPY", price: 0, change: 0, previousClose: 0 },
+            { symbol: "AUD/USD", name: "AUD/USD", price: 0, change: 0, previousClose: 0 },
+            { symbol: "USD/CAD", name: "USD/CAD", price: 0, change: 0, previousClose: 0 },
+            { symbol: "BTC/USD", name: "BTC/USD", price: 0, change: 0, previousClose: 0 },
+            { symbol: "XAU/USD", name: "XAU/USD", price: 0, change: 0, previousClose: 0 }
+        ];
 
-        // Signal history storage
-        let signalHistory = [];
-
-        // Current market data cache
-        let marketDataCache = {};
-
-        // Admin access flag
-        let adminAccessGranted = false;
+        // Technical Analysis Data
+        const technicalData = {
+            "EUR/USD": { rsi: 50, ema20: 0, ema50: 0, macd: 0, trend: "neutral" },
+            "GBP/USD": { rsi: 50, ema20: 0, ema50: 0, macd: 0, trend: "neutral" },
+            "USD/JPY": { rsi: 50, ema20: 0, ema50: 0, macd: 0, trend: "neutral" },
+            "AUD/USD": { rsi: 50, ema20: 0, ema50: 0, macd: 0, trend: "neutral" },
+            "USD/CAD": { rsi: 50, ema20: 0, ema50: 0, macd: 0, trend: "neutral" },
+            "BTC/USD": { rsi: 50, ema20: 0, ema50: 0, macd: 0, trend: "neutral" },
+            "XAU/USD": { rsi: 50, ema20: 0, ema50: 0, macd: 0, trend: "neutral" }
+        };
 
         // DOM Elements
         const elements = {
-            // Existing elements
-            loginContainer: document.getElementById("login-container"),
-            loginForm: document.getElementById("login-form"),
-            registerForm: document.getElementById("register-form"),
-            licenseKeyDisplay: document.getElementById("license-key-display"),
-            dashboard: document.getElementById("dashboard"),
-            userNameDisplay: document.getElementById("userNameDisplay"),
-            userTradingStyleDisplay: document.getElementById("userTradingStyleDisplay"),
-            pairSelect: document.getElementById("pairSelect"),
-            signalPair: document.getElementById("signal-pair"),
-            signalDirection: document.getElementById("signal-direction"),
-            signalMessage: document.getElementById("signal-message"),
-            entryPrice: document.getElementById("entry-price"),
-            takeProfit: document.getElementById("take-profit"),
-            stopLoss: document.getElementById("stop-loss"),
-            chartIframe: document.getElementById("chartIframe"),
-            loginBtn: document.getElementById("loginBtn"),
-            registerBtn: document.getElementById("registerBtn"),
-            logoutBtn: document.getElementById("logoutBtn"),
-            refreshBtn: document.getElementById("refreshBtn"),
-            showRegister: document.getElementById("showRegister"),
-            showLogin: document.getElementById("showLogin"),
-            goToLogin: document.getElementById("goToLogin"),
-            goToLogin2: document.getElementById("goToLogin2"),
-            goToLogin3: document.getElementById("goToLogin3"),
-            generatedLicenseKey: document.getElementById("generated-license-key"),
-            activationCodeInput: document.getElementById("activationCode"),
-            tradingStyleSelect: document.getElementById("tradingStyle"),
-            loginEmail: document.getElementById("loginEmail"),
-            loginPassword: document.getElementById("loginPassword"),
-            loginLicenseKey: document.getElementById("loginLicenseKey"),
-            regName: document.getElementById("regName"),
-            regEmail: document.getElementById("regEmail"),
-            regPassword: document.getElementById("regPassword"),
-            regConfirmPassword: document.getElementById("regConfirmPassword"),
+            // Login/Register
+            loginModal: document.getElementById('loginModal'),
+            loginForm: document.getElementById('loginForm'),
+            registerForm: document.getElementById('registerForm'),
+            licenseDisplay: document.getElementById('licenseDisplay'),
+            loginBtn: document.getElementById('loginBtn'),
+            registerBtn: document.getElementById('registerBtn'),
+            showRegisterBtn: document.getElementById('showRegisterBtn'),
+            showRegisterLink: document.getElementById('showRegisterLink'),
+            showLoginBtn: document.getElementById('showLoginBtn'),
+            goToLoginBtn: document.getElementById('goToLoginBtn'),
             
-            // Hamburger menu elements
-            hamburgerMenu: document.getElementById("hamburgerMenu"),
-            menuOverlay: document.getElementById("menuOverlay"),
-            menuContent: document.getElementById("menuContent"),
-            closeMenu: document.getElementById("closeMenu"),
+            // Login inputs
+            loginEmail: document.getElementById('loginEmail'),
+            loginPassword: document.getElementById('loginPassword'),
+            loginLicenseKey: document.getElementById('loginLicenseKey'),
             
-            // Menu content elements
-            menuUserName: document.getElementById("menuUserName"),
-            menuUserEmail: document.getElementById("menuUserEmail"),
-            menuTradingStyle: document.getElementById("menuTradingStyle"),
-            menuMemberSince: document.getElementById("menuMemberSince"),
-            sessionDot: document.getElementById("sessionDot"),
-            sessionStatus: document.getElementById("sessionStatus"),
-            sessionTime: document.getElementById("sessionTime"),
-            currentSession: document.getElementById("currentSession"),
-            sessionType: document.getElementById("sessionType"),
-            sessionVolatility: document.getElementById("sessionVolatility"),
-            menuCurrentSignal: document.getElementById("menuCurrentSignal"),
-            confidenceLevel: document.getElementById("confidenceLevel"),
-            confidenceFill: document.getElementById("confidenceFill"),
-            signalAnalysis: document.getElementById("signalAnalysis"),
-            signalHistoryList: document.getElementById("signalHistoryList"),
+            // Register inputs
+            regName: document.getElementById('regName'),
+            regEmail: document.getElementById('regEmail'),
+            regPassword: document.getElementById('regPassword'),
+            tradingStrategy: document.getElementById('tradingStrategy'),
+            activationCode: document.getElementById('activationCode'),
+            generatedLicenseKey: document.getElementById('generatedLicenseKey'),
             
-            // Trading style change elements
-            changeStyleBtn: document.getElementById("changeStyleBtn"),
-            styleOptions: document.getElementById("styleOptions"),
-            styleScalping: document.getElementById("styleScalping"),
-            styleDay: document.getElementById("styleDay"),
-            styleSwing: document.getElementById("styleSwing"),
+            // Interface
+            quotesPanel: document.getElementById('quotesPanel'),
+            pairsList: document.getElementById('pairsList'),
+            refreshQuotes: document.getElementById('refreshQuotes'),
             
-            // Dashboard elements
-            marketStatus: document.getElementById("marketStatus"),
-            bestSession: document.getElementById("bestSession"),
-            riskLevel: document.getElementById("riskLevel"),
-            volatilityIndicator: document.getElementById("volatilityIndicator"),
-            dashboardSessionDot: document.getElementById("dashboardSessionDot"),
-            dashboardSessionStatus: document.getElementById("dashboardSessionStatus"),
-            currentTime: document.getElementById("currentTime"),
-            sessionLondon: document.getElementById("sessionLondon"),
-            sessionNY: document.getElementById("sessionNY"),
-            sessionAsia: document.getElementById("sessionAsia"),
-            signalConfidenceFill: document.getElementById("signalConfidenceFill"),
-            signalConfidenceValue: document.getElementById("signalConfidenceValue"),
-            signalAnalysisText: document.getElementById("signalAnalysisText"),
+            // Tabs
+            menuTabs: document.querySelectorAll('.menu-tab'),
+            tabPanes: document.querySelectorAll('.tab-pane'),
             
-            // Payment button
-            payNowButton: document.getElementById("payNowButton"),
+            // Chart
+            mainChart: document.getElementById('mainChart'),
+            chartTabFrame: document.getElementById('chartTabFrame'),
             
-            // Status indicator elements
-            statusIndicator: document.getElementById("statusIndicator"),
-            statusDot: document.getElementById("statusDot"),
-            statusText: document.getElementById("statusText"),
+            // Trade
+            tradePair: document.getElementById('tradePair'),
+            tradeDirection: document.getElementById('tradeDirection'),
+            entryPrice: document.getElementById('entryPrice'),
+            stopLoss: document.getElementById('stopLoss'),
+            riskReward: document.getElementById('riskReward'),
+            signalStrength: document.getElementById('signalStrength'),
+            tp1: document.getElementById('tp1'),
+            tp2: document.getElementById('tp2'),
+            tp3: document.getElementById('tp3'),
+            executeBuy: document.getElementById('executeBuy'),
+            executeSell: document.getElementById('executeSell'),
+            refreshSignal: document.getElementById('refreshSignal'),
             
-            // Menu status elements
-            menuStatusText: document.getElementById("menuStatusText"),
-            licenseType: document.getElementById("licenseType"),
-            licenseExpiry: document.getElementById("licenseExpiry"),
-            signalsCount: document.getElementById("signalsCount"),
+            // History
+            historyTableBody: document.getElementById('historyTableBody'),
             
-            // Admin panel elements
-            adminPanel: document.getElementById("adminPanel"),
-            adminOverlay: document.getElementById("adminOverlay"),
-            closeAdmin: document.getElementById("closeAdmin"),
-            totalUsers: document.getElementById("totalUsers"),
-            activeUsers: document.getElementById("activeUsers"),
-            totalRevenue: document.getElementById("totalRevenue"),
-            signalAccuracy: document.getElementById("signalAccuracy"),
-            usersTableBody: document.getElementById("usersTableBody"),
+            // Settings
+            accountDetails: document.getElementById('accountDetails'),
+            strategyOptions: document.getElementById('strategyOptions'),
+            sessionInfo: document.getElementById('sessionInfo'),
+            apiStatus: document.getElementById('apiStatus'),
+            engineStatus: document.getElementById('engineStatus'),
+            lastUpdate: document.getElementById('lastUpdate'),
+            logoutBtn: document.getElementById('logoutBtn'),
             
-            // Secret admin link
-            secretAdminLink: document.getElementById("secretAdminLink")
+            // Status Bar
+            connectionDot: document.getElementById('connectionDot'),
+            connectionStatus: document.getElementById('connectionStatus'),
+            currentTime: document.getElementById('currentTime'),
+            currentSession: document.getElementById('currentSession'),
+            userStatus: document.getElementById('userStatus')
         };
 
-        // Initialize the app
-        function init() {
-            // Set up event listeners
-            elements.loginBtn.addEventListener("click", handleLogin);
-            elements.registerBtn.addEventListener("click", handleRegister);
-            elements.logoutBtn.addEventListener("click", handleLogout);
-            elements.refreshBtn.addEventListener("click", handleRefresh);
-            elements.pairSelect.addEventListener("change", handlePairChange);
-            elements.showRegister.addEventListener("click", showRegisterForm);
-            elements.showLogin.addEventListener("click", showLoginForm);
-            elements.goToLogin.addEventListener("click", showLoginForm);
-            elements.goToLogin2.addEventListener("click", showLoginForm);
-            elements.goToLogin3.addEventListener("click", showLoginForm);
-            
-            // Hamburger menu event listeners
-            elements.hamburgerMenu.addEventListener("click", toggleMenu);
-            elements.menuOverlay.addEventListener("click", closeMenu);
-            elements.closeMenu.addEventListener("click", closeMenu);
-            
-            // Trading style change event listeners
-            elements.changeStyleBtn.addEventListener("click", toggleStyleOptions);
-            
-            // Style option click listeners
-            const styleOptions = elements.styleOptions.querySelectorAll('.style-option');
-            styleOptions.forEach(option => {
-                option.addEventListener('click', handleStyleChange);
-            });
-            
-            // Admin panel listeners
-            elements.closeAdmin.addEventListener("click", closeAdminPanel);
-            elements.adminOverlay.addEventListener("click", closeAdminPanel);
-            
-            // Update registration status
-            updateRegistrationStatus();
-            
-            // Load saved users from localStorage
-            loadUsersFromStorage();
-            
-            // Check if already logged in
-            if (localStorage.getItem("loggedIn") === "true") {
-                const userEmail = localStorage.getItem("userEmail");
-                const userName = localStorage.getItem("userName");
-                const userTradingStyle = localStorage.getItem("userTradingStyle");
-                if (userEmail && userName) {
-                    showDashboard(userName, userTradingStyle);
-                    updateMenuUserDetails(userName, userEmail, userTradingStyle);
-                    setActiveStyleOption(userTradingStyle);
-                }
-            }
-            
-            // Start session update interval
-            updateTradingSession();
-            setInterval(updateTradingSession, 1000); // Update every second for clock
-            
-            // Make "PRESS HERE" message more visible
-            highlightPressHereMessage();
-            
-            // Initialize security
-            initializeSecurity();
-        }
-        
-        // Make "PRESS HERE" message more visible
-        function highlightPressHereMessage() {
-            const pressHereLinks = [elements.goToLogin, elements.goToLogin2, elements.goToLogin3];
-            pressHereLinks.forEach(link => {
-                if (link) {
-                    link.style.backgroundColor = "rgba(0, 255, 0, 0.3)";
-                    link.style.color = "var(--primary-color)";
-                    link.style.fontWeight = "bold";
-                    link.style.textShadow = "0 0 5px var(--primary-color)";
-                    link.style.border = "2px solid var(--primary-color)";
-                    link.style.padding = "10px 20px";
-                    link.style.borderRadius = "8px";
-                    link.style.display = "inline-block";
-                    link.style.margin = "10px auto";
-                    link.style.textAlign = "center";
-                    link.innerHTML = "<i class='fas fa-hand-point-right'></i> <strong>PRESS HERE TO LOGIN</strong> <i class='fas fa-hand-point-left'></i>";
-                }
-            });
-        }
-        
-        // Initialize security features
-        function initializeSecurity() {
-            // Clear sensitive data on page refresh
-            window.addEventListener('beforeunload', () => {
-                sessionStorage.removeItem('sensitiveData');
-            });
-            
-            // Disable right-click for protection
-            document.addEventListener('contextmenu', (e) => {
-                e.preventDefault();
-                return false;
-            });
-            
-            // Disable text selection for key elements
-            const protectElements = [elements.generatedLicenseKey, elements.licenseKeyDisplay];
-            protectElements.forEach(el => {
-                if (el) {
-                    el.style.userSelect = 'none';
-                    el.style.webkitUserSelect = 'none';
-                }
-            });
-            
-            // Prevent keyboard shortcuts for developer tools
-            document.addEventListener('keydown', (e) => {
-                // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
-                if (e.key === 'F12' || 
-                    (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i')) ||
-                    (e.ctrlKey && e.shiftKey && (e.key === 'J' || e.key === 'j')) ||
-                    (e.ctrlKey && e.key === 'U') ||
-                    (e.ctrlKey && e.key === 'u')) {
-                    e.preventDefault();
-                    showSecurityAlert();
-                    return false;
-                }
-            });
-        }
-        
-        // Show security alert
-        function showSecurityAlert() {
-            alert("⚠️ SECURITY ALERT: This action is restricted for security reasons.");
-        }
-        
-        // Load users from localStorage
-        function loadUsersFromStorage() {
-            const savedUsers = localStorage.getItem('fxBullsUsers');
-            if (savedUsers) {
-                try {
-                    const parsed = JSON.parse(savedUsers);
-                    Object.assign(userDatabase, parsed);
-                } catch (e) {
-                    console.error('Error loading users:', e);
-                }
-            }
-        }
-        
-        // Save users to localStorage
-        function saveUsersToStorage() {
+        // Twelve Data API Functions
+        async function fetchRealTimePrice(symbol) {
             try {
-                localStorage.setItem('fxBullsUsers', JSON.stringify(userDatabase));
-            } catch (e) {
-                console.error('Error saving users:', e);
+                const response = await fetch(
+                    `${config.baseURL}/price?symbol=${config.symbolMapping[symbol]}&apikey=${config.twelveDataApiKey}`
+                );
+                
+                if (!response.ok) {
+                    throw new Error(`API request failed: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.price) {
+                    return parseFloat(data.price);
+                } else {
+                    // Fallback to demo data if API returns no price
+                    return getDemoPrice(symbol);
+                }
+            } catch (error) {
+                console.warn(`Failed to fetch real-time price for ${symbol}:`, error);
+                // Use fallback demo data
+                return getDemoPrice(symbol);
             }
         }
-        
-        // Update registration status
-        function updateRegistrationStatus() {
-            const isRegistered = localStorage.getItem("isRegistered") === "true";
-            const userEmail = localStorage.getItem("userEmail");
-            const isLoggedIn = localStorage.getItem("loggedIn") === "true";
+
+        async function fetchHistoricalData(symbol, interval = "15min", outputsize = 50) {
+            try {
+                const response = await fetch(
+                    `${config.baseURL}/time_series?symbol=${config.symbolMapping[symbol]}&interval=${interval}&outputsize=${outputsize}&apikey=${config.twelveDataApiKey}`
+                );
+                
+                if (!response.ok) {
+                    throw new Error(`Historical data request failed: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.values && Array.isArray(data.values)) {
+                    return data.values.map(item => ({
+                        datetime: item.datetime,
+                        open: parseFloat(item.open),
+                        high: parseFloat(item.high),
+                        low: parseFloat(item.low),
+                        close: parseFloat(item.close),
+                        volume: parseInt(item.volume || 0)
+                    }));
+                } else {
+                    return generateDemoHistoricalData(symbol);
+                }
+            } catch (error) {
+                console.warn(`Failed to fetch historical data for ${symbol}:`, error);
+                return generateDemoHistoricalData(symbol);
+            }
+        }
+
+        function getDemoPrice(symbol) {
+            // Demo prices that change realistically
+            const basePrices = {
+                "EUR/USD": 1.08542,
+                "GBP/USD": 1.26532,
+                "USD/JPY": 150.456,
+                "AUD/USD": 0.65521,
+                "USD/CAD": 1.35012,
+                "BTC/USD": 42156.34,
+                "XAU/USD": 2050.45
+            };
             
-            if (isRegistered && userEmail) {
-                elements.statusDot.className = "status-dot active";
-                elements.statusText.textContent = "REGISTERED";
-                elements.statusText.style.color = "var(--primary-color)";
+            const volatility = {
+                "EUR/USD": 0.0003,
+                "GBP/USD": 0.0004,
+                "USD/JPY": 0.3,
+                "AUD/USD": 0.0002,
+                "USD/CAD": 0.0003,
+                "BTC/USD": 150,
+                "XAU/USD": 8
+            };
+            
+            const basePrice = basePrices[symbol];
+            const vol = volatility[symbol];
+            const change = (Math.random() - 0.5) * 2 * vol;
+            
+            return basePrice + change;
+        }
+
+        function generateDemoHistoricalData(symbol) {
+            const data = [];
+            const basePrice = getDemoPrice(symbol);
+            
+            for (let i = 50; i >= 0; i--) {
+                const date = new Date(Date.now() - i * 15 * 60000);
+                const price = basePrice + (Math.random() - 0.5) * 0.002 * basePrice;
                 
-                elements.menuStatusText.textContent = "ACTIVE";
-                elements.menuStatusText.style.color = "var(--primary-color)";
-                elements.licenseType.textContent = "PREMIUM";
-                elements.signalsCount.textContent = signalHistory.length;
-            } else if (isLoggedIn) {
-                elements.statusDot.className = "status-dot active";
-                elements.statusText.textContent = "LOGGED IN";
-                elements.statusText.style.color = "var(--primary-color)";
+                data.push({
+                    datetime: date.toISOString(),
+                    open: price * 0.999,
+                    high: price * 1.001,
+                    low: price * 0.998,
+                    close: price,
+                    volume: Math.floor(Math.random() * 1000) + 100
+                });
+            }
+            
+            return data;
+        }
+
+        function calculateTechnicalIndicators(historicalData) {
+            if (!historicalData || historicalData.length < 20) {
+                return { rsi: 50, ema20: 0, ema50: 0, macd: 0, trend: "neutral" };
+            }
+            
+            const closes = historicalData.map(d => d.close);
+            
+            // Calculate RSI
+            let gains = 0;
+            let losses = 0;
+            
+            for (let i = 1; i < Math.min(15, closes.length); i++) {
+                const change = closes[i] - closes[i - 1];
+                if (change > 0) gains += change;
+                else losses += Math.abs(change);
+            }
+            
+            const avgGain = gains / 14;
+            const avgLoss = losses / 14;
+            const rs = avgLoss === 0 ? 100 : avgGain / avgLoss;
+            const rsi = 100 - (100 / (1 + rs));
+            
+            // Calculate EMA20
+            let ema20 = closes[0];
+            const multiplier20 = 2 / (20 + 1);
+            
+            for (let i = 1; i < Math.min(20, closes.length); i++) {
+                ema20 = (closes[i] - ema20) * multiplier20 + ema20;
+            }
+            
+            // Calculate EMA50 (if we have enough data)
+            let ema50 = closes[0];
+            const multiplier50 = 2 / (50 + 1);
+            
+            for (let i = 1; i < Math.min(50, closes.length); i++) {
+                ema50 = (closes[i] - ema50) * multiplier50 + ema50;
+            }
+            
+            // Calculate MACD (simplified)
+            const macd = ema20 - ema50;
+            
+            // Determine trend
+            let trend = "neutral";
+            const lastPrice = closes[closes.length - 1];
+            
+            if (rsi > 70) trend = "overbought";
+            else if (rsi < 30) trend = "oversold";
+            else if (lastPrice > ema20 && ema20 > ema50) trend = "bullish";
+            else if (lastPrice < ema20 && ema20 < ema50) trend = "bearish";
+            
+            return {
+                rsi: Math.round(rsi),
+                ema20: ema20,
+                ema50: ema50,
+                macd: macd,
+                trend: trend
+            };
+        }
+
+        async function updateMarketData() {
+            elements.apiStatus.textContent = "Connected";
+            elements.apiStatus.style.color = "var(--primary-color)";
+            elements.connectionDot.className = 'status-dot connected';
+            elements.connectionStatus.textContent = 'Connected to market data';
+            
+            // Update each pair with real data
+            for (const pair of marketPairs) {
+                try {
+                    // Get real-time price
+                    const price = await fetchRealTimePrice(pair.symbol);
+                    
+                    // Get historical data for technical analysis
+                    const historicalData = await fetchHistoricalData(pair.symbol, "15min", 50);
+                    
+                    // Calculate technical indicators
+                    const indicators = calculateTechnicalIndicators(historicalData);
+                    technicalData[pair.symbol] = indicators;
+                    
+                    // Calculate change
+                    const change = pair.previousClose ? price - pair.previousClose : 0;
+                    
+                    // Update pair data
+                    pair.price = price;
+                    pair.change = change;
+                    
+                    // Store previous close for next update
+                    if (historicalData.length > 0) {
+                        pair.previousClose = historicalData[historicalData.length - 1].close;
+                    }
+                    
+                } catch (error) {
+                    console.error(`Error updating ${pair.symbol}:`, error);
+                    // Use demo data as fallback
+                    const demoPrice = getDemoPrice(pair.symbol);
+                    pair.price = demoPrice;
+                    pair.change = (Math.random() - 0.5) * 0.001 * demoPrice;
+                }
+            }
+            
+            // Update UI
+            populateMarketPairs();
+            elements.lastUpdate.textContent = new Date().toLocaleTimeString();
+            
+            // If on trade tab, update signal
+            if (document.querySelector('.tab-pane.active').id === 'tradeTab') {
+                generateSignal();
+            }
+        }
+
+        function generateAdvancedSignal() {
+            if (!currentUser) {
+                alert('Please login to generate signals');
+                elements.loginModal.classList.remove('hidden');
+                return;
+            }
+            
+            const pair = currentPair;
+            const strategy = currentStrategy;
+            const strategyConfig = config.tradingStrategies[strategy];
+            const indicators = technicalData[pair];
+            
+            // Get current price
+            const pairData = marketPairs.find(p => p.symbol === pair);
+            const currentPrice = pairData ? pairData.price : getDemoPrice(pair);
+            
+            const pipSize = config.pipValues[pair] || 0.0001;
+            
+            // Generate signal based on technical indicators
+            let direction = "BUY";
+            let signalStrength = "Medium";
+            let tpMultiplier = strategyConfig.tpMultiplier;
+            let slMultiplier = strategyConfig.slMultiplier;
+            
+            // Use technical analysis to determine direction
+            if (indicators) {
+                if (indicators.trend === "bullish" || indicators.trend === "oversold") {
+                    direction = "BUY";
+                    if (indicators.rsi < 30) signalStrength = "Very High";
+                    else if (indicators.rsi < 40) signalStrength = "High";
+                } else if (indicators.trend === "bearish" || indicators.trend === "overbought") {
+                    direction = "SELL";
+                    if (indicators.rsi > 70) signalStrength = "Very High";
+                    else if (indicators.rsi > 60) signalStrength = "High";
+                } else {
+                    // Random direction for neutral markets
+                    direction = Math.random() > 0.5 ? "BUY" : "SELL";
+                    signalStrength = "Medium";
+                }
                 
-                elements.menuStatusText.textContent = "LOGGED IN";
-                elements.menuStatusText.style.color = "var(--primary-color)";
-                elements.licenseType.textContent = "TEMPORARY";
+                // Adjust TP/SL based on volatility and indicators
+                const volatility = Math.abs(pairData?.change || 0.0005) * 10000;
+                if (volatility > 20) {
+                    tpMultiplier *= 1.5;
+                    slMultiplier *= 1.2;
+                } else if (volatility < 10) {
+                    tpMultiplier *= 0.8;
+                    slMultiplier *= 0.8;
+                }
+            }
+            
+            // Calculate TP/SL based on strategy
+            let basePips;
+            switch(strategy) {
+                case "scalping":
+                    basePips = 10 + Math.floor(Math.random() * 10);
+                    break;
+                case "day":
+                    basePips = 30 + Math.floor(Math.random() * 20);
+                    break;
+                case "swing":
+                    basePips = 50 + Math.floor(Math.random() * 30);
+                    break;
+                default:
+                    basePips = 20;
+            }
+            
+            const tpPips = Math.round(basePips * tpMultiplier);
+            const slPips = Math.round(basePips * slMultiplier);
+            
+            // Calculate prices
+            let entry, tp1, tp2, tp3, sl;
+            
+            if (direction === "BUY") {
+                entry = currentPrice;
+                tp1 = currentPrice + (tpPips * 0.5 * pipSize);
+                tp2 = currentPrice + (tpPips * 0.8 * pipSize);
+                tp3 = currentPrice + (tpPips * pipSize);
+                sl = currentPrice - (slPips * pipSize);
             } else {
-                elements.statusDot.className = "status-dot inactive";
-                elements.statusText.textContent = "NOT REGISTERED";
-                elements.statusText.style.color = "var(--danger-color)";
-                
-                elements.menuStatusText.textContent = "NOT REGISTERED";
-                elements.menuStatusText.style.color = "var(--danger-color)";
-                elements.licenseType.textContent = "-";
-            }
-        }
-        
-        // Toggle hamburger menu
-        function toggleMenu() {
-            elements.menuContent.classList.toggle("active");
-            elements.menuOverlay.style.display = elements.menuContent.classList.contains("active") ? "block" : "none";
-        }
-        
-        // Close menu
-        function closeMenu() {
-            elements.menuContent.classList.remove("active");
-            elements.menuOverlay.style.display = "none";
-            elements.styleOptions.classList.remove("active");
-        }
-        
-        // Toggle trading style options
-        function toggleStyleOptions() {
-            elements.styleOptions.classList.toggle("active");
-        }
-        
-        // Handle trading style change
-        function handleStyleChange(event) {
-            const styleElement = event.currentTarget;
-            const newStyle = styleElement.getAttribute('data-style');
-            
-            const userEmail = localStorage.getItem("userEmail");
-            if (!userEmail) return;
-            
-            if (userDatabase[userEmail]) {
-                userDatabase[userEmail].tradingStyle = newStyle;
-                saveUsersToStorage();
+                entry = currentPrice;
+                tp1 = currentPrice - (tpPips * 0.5 * pipSize);
+                tp2 = currentPrice - (tpPips * 0.8 * pipSize);
+                tp3 = currentPrice - (tpPips * pipSize);
+                sl = currentPrice + (slPips * pipSize);
             }
             
-            localStorage.setItem("userTradingStyle", newStyle);
-            updateMenuTradingStyle(newStyle);
-            updateDashboardTradingStyle(newStyle);
-            setActiveStyleOption(newStyle);
-            elements.styleOptions.classList.remove("active");
+            // Update display
+            elements.tradeDirection.textContent = direction;
+            elements.tradeDirection.className = `signal-direction ${direction.toLowerCase()}`;
             
-            alert(`Trading style changed to: ${getStyleDisplayName(newStyle)}`);
-            generateSignal(newStyle);
+            const decimalPlaces = pair === 'BTC/USD' ? 2 : (pair === 'XAU/USD' ? 2 : 5);
+            elements.entryPrice.textContent = entry.toFixed(decimalPlaces);
+            elements.stopLoss.textContent = sl.toFixed(decimalPlaces);
+            elements.tp1.textContent = tp1.toFixed(decimalPlaces);
+            elements.tp2.textContent = tp2.toFixed(decimalPlaces);
+            elements.tp3.textContent = tp3.toFixed(decimalPlaces);
+            elements.riskReward.textContent = strategyConfig.riskReward;
+            elements.signalStrength.textContent = signalStrength;
+            
+            // Add to history
+            const signal = {
+                time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }),
+                date: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit' }),
+                pair: pair,
+                direction: direction,
+                entry: entry.toFixed(decimalPlaces),
+                tp1: tp1.toFixed(decimalPlaces),
+                tp2: tp2.toFixed(decimalPlaces),
+                tp3: tp3.toFixed(decimalPlaces),
+                sl: sl.toFixed(decimalPlaces),
+                status: 'Active',
+                strength: signalStrength
+            };
+            
+            signalHistory.unshift(signal);
+            if (signalHistory.length > 20) {
+                signalHistory.length = 20;
+            }
+            
+            // Update history if on history tab
+            if (document.querySelector('.tab-pane.active').id === 'historyTab') {
+                updateHistory();
+            }
+            
+            // Update last update time
+            elements.lastUpdate.textContent = new Date().toLocaleTimeString();
+            elements.engineStatus.textContent = "Running";
+            elements.engineStatus.style.color = "var(--primary-color)";
         }
-        
-        // Set active style option
-        function setActiveStyleOption(style) {
-            const styleOptions = elements.styleOptions.querySelectorAll('.style-option');
-            styleOptions.forEach(option => {
-                option.classList.remove('active');
-                const radioInput = option.querySelector('input');
-                if (radioInput.value === style) {
-                    option.classList.add('active');
-                    radioInput.checked = true;
+
+        // Initialize
+        function init() {
+            setupEventListeners();
+            updateMarketData(); // Initial market data load
+            updateTime();
+            setInterval(updateTime, 1000);
+            updateSessionInfo();
+            setInterval(updateSessionInfo, 60000);
+            
+            // Auto-refresh market data every 30 seconds
+            setInterval(updateMarketData, 30000);
+            
+            // Check for saved login
+            checkSavedLogin();
+            
+            // Initial chart update
+            setTimeout(() => {
+                updateChart();
+                updateChartTab();
+                generateAdvancedSignal();
+            }, 2000);
+        }
+
+        function setupEventListeners() {
+            // Menu Tabs
+            elements.menuTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabName = tab.dataset.tab;
+                    switchTab(tabName);
+                });
+            });
+            
+            // Login/Register
+            elements.loginBtn.addEventListener('click', handleLogin);
+            elements.registerBtn.addEventListener('click', handleRegister);
+            elements.showRegisterBtn.addEventListener('click', showRegisterForm);
+            elements.showRegisterLink.addEventListener('click', showRegisterForm);
+            elements.showLoginBtn.addEventListener('click', showLoginForm);
+            elements.goToLoginBtn.addEventListener('click', showLoginForm);
+            
+            // Quotes Panel
+            elements.refreshQuotes.addEventListener('click', () => {
+                updateMarketData();
+                alert('Refreshing real-time market data...');
+            });
+            
+            // Trade Buttons
+            elements.executeBuy.addEventListener('click', () => executeTrade('buy'));
+            elements.executeSell.addEventListener('click', () => executeTrade('sell'));
+            elements.refreshSignal.addEventListener('click', generateAdvancedSignal);
+            
+            // Strategy Options
+            document.querySelectorAll('.strategy-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    const strategy = option.dataset.strategy;
+                    selectStrategy(strategy);
+                });
+            });
+            
+            // Logout
+            elements.logoutBtn.addEventListener('click', handleLogout);
+            
+            // Chart Controls
+            document.getElementById('zoomIn').addEventListener('click', () => alert('Zoom In'));
+            document.getElementById('zoomOut').addEventListener('click', () => alert('Zoom Out'));
+            document.getElementById('zoomIn2').addEventListener('click', () => alert('Zoom In'));
+            document.getElementById('zoomOut2').addEventListener('click', () => alert('Zoom Out'));
+            
+            // Timeframe buttons in chart tab
+            document.querySelectorAll('.chart-btn[data-tf]').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const timeframe = e.target.dataset.tf;
+                    updateChart(timeframe);
+                });
+            });
+        }
+
+        function switchTab(tabName) {
+            // Update active tab
+            elements.menuTabs.forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.dataset.tab === tabName) {
+                    tab.classList.add('active');
+                }
+            });
+            
+            // Show active tab content
+            elements.tabPanes.forEach(pane => {
+                pane.classList.remove('active');
+                if (pane.id === tabName + 'Tab') {
+                    pane.classList.add('active');
+                    
+                    // Load content for tab
+                    switch(tabName) {
+                        case 'quotes':
+                            updateChart();
+                            break;
+                        case 'chart':
+                            updateChartTab();
+                            break;
+                        case 'trade':
+                            generateAdvancedSignal();
+                            break;
+                        case 'history':
+                            updateHistory();
+                            break;
+                        case 'settings':
+                            updateSettings();
+                            break;
+                    }
                 }
             });
         }
-        
-        // Get style display name
-        function getStyleDisplayName(style) {
-            switch(style) {
-                case "scalping":
-                    return "SCALPING (1-15 min timeframe)";
-                case "day":
-                    return "DAY TRADING (1-4 hour timeframe)";
-                case "swing":
-                    return "SWING TRADING (4 hour-daily timeframe)";
-                default:
-                    return style.toUpperCase();
-            }
-        }
-        
-        // Update menu trading style
-        function updateMenuTradingStyle(style) {
-            elements.menuTradingStyle.textContent = getStyleDisplayName(style);
-        }
-        
-        // Update dashboard trading style
-        function updateDashboardTradingStyle(style) {
-            elements.userTradingStyleDisplay.textContent = getStyleDisplayName(style);
-        }
-        
-        // Update menu user details
-        function updateMenuUserDetails(name, email, tradingStyle) {
-            elements.menuUserName.textContent = name;
-            elements.menuUserEmail.textContent = email;
-            updateMenuTradingStyle(tradingStyle);
+
+        function populateMarketPairs() {
+            elements.pairsList.innerHTML = '';
             
-            const memberSince = localStorage.getItem("memberSince");
-            if (!memberSince) {
-                const today = new Date().toLocaleDateString('en-US', {
-                    day: '2-digit',
-                    month: 'short',
-                    year: 'numeric'
+            if (marketPairs.every(p => p.price === 0)) {
+                elements.pairsList.innerHTML = `
+                    <div class="loading">
+                        <i class="fas fa-spinner"></i> Loading market data...
+                    </div>
+                `;
+                return;
+            }
+            
+            marketPairs.forEach(pair => {
+                const pairElement = document.createElement('div');
+                pairElement.className = 'pair-item';
+                if (pair.symbol === currentPair) pairElement.classList.add('active');
+                pairElement.dataset.symbol = pair.symbol;
+                
+                const isPositive = pair.change >= 0;
+                const price = pair.price || 0;
+                const change = pair.change || 0;
+                
+                // Determine decimal places
+                let decimalPlaces = 5;
+                if (pair.symbol === 'BTC/USD' || pair.symbol === 'XAU/USD') {
+                    decimalPlaces = 2;
+                } else if (pair.symbol === 'USD/JPY') {
+                    decimalPlaces = 3;
+                }
+                
+                pairElement.innerHTML = `
+                    <div>
+                        <div class="pair-name">${pair.name}</div>
+                        <div style="font-size: 11px; color: var(--light-color);">${pair.symbol}</div>
+                    </div>
+                    <div>
+                        <div class="pair-price">${price.toFixed(decimalPlaces)}</div>
+                        <div class="pair-change ${isPositive ? 'positive' : 'negative'}">
+                            ${isPositive ? '+' : ''}${change.toFixed(decimalPlaces)}
+                        </div>
+                    </div>
+                `;
+                
+                pairElement.addEventListener('click', () => {
+                    selectPair(pair.symbol);
                 });
-                localStorage.setItem("memberSince", today);
-                elements.menuMemberSince.textContent = today;
-            } else {
-                elements.menuMemberSince.textContent = memberSince;
+                
+                elements.pairsList.appendChild(pairElement);
+            });
+        }
+
+        function selectPair(symbol) {
+            currentPair = symbol;
+            
+            // Update active state
+            document.querySelectorAll('.pair-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.symbol === symbol) {
+                    item.classList.add('active');
+                }
+            });
+            
+            // Update trade display
+            elements.tradePair.textContent = symbol;
+            
+            // Update charts
+            updateChart();
+            updateChartTab();
+            
+            // Generate new signal
+            if (document.querySelector('.tab-pane.active').id === 'tradeTab') {
+                generateAdvancedSignal();
             }
         }
-        
-        // Enhanced Update trading session information
-        function updateTradingSession() {
-            const now = new Date();
-            const hour = now.getHours();
-            const minute = now.getMinutes();
-            const day = now.getDay();
+
+        function selectStrategy(strategy) {
+            currentStrategy = strategy;
             
-            // Format time
-            const formattedTime = now.toLocaleTimeString('en-US', {
+            // Update active state
+            document.querySelectorAll('.strategy-option').forEach(option => {
+                option.classList.remove('active');
+                if (option.dataset.strategy === strategy) {
+                    option.classList.add('active');
+                    option.querySelector('input').checked = true;
+                }
+            });
+            
+            // Update charts
+            updateChart();
+            updateChartTab();
+            
+            // Generate new signal with new strategy
+            generateAdvancedSignal();
+            
+            // Save strategy preference
+            if (currentUser) {
+                currentUser.strategy = strategy;
+                localStorage.setItem('userTradingStrategy', strategy);
+            }
+        }
+
+        function updateChart(timeframe = null) {
+            const strategy = currentStrategy;
+            const tf = timeframe || config.tradingStrategies[strategy].timeframe;
+            const symbol = currentPair.replace("/", "");
+            
+            const iframeSrc = `https://s.tradingview.com/widgetembed/?symbol=${symbol}&interval=${tf}&theme=dark&style=1&timezone=Africa%2FJohannesburg&hide_side_toolbar=true`;
+            elements.mainChart.src = iframeSrc;
+        }
+
+        function updateChartTab() {
+            const strategy = currentStrategy;
+            const tf = config.tradingStrategies[strategy].timeframe;
+            const symbol = currentPair.replace("/", "");
+            
+            const iframeSrc = `https://s.tradingview.com/widgetembed/?symbol=${symbol}&interval=${tf}&theme=dark&style=1&timezone=Africa%2FJohannesburg&hide_side_toolbar=true`;
+            elements.chartTabFrame.src = iframeSrc;
+        }
+
+        function executeTrade(type) {
+            if (!currentUser) {
+                alert('Please login to trade');
+                elements.loginModal.classList.remove('hidden');
+                return;
+            }
+            
+            alert(`${type.toUpperCase()} order executed for ${currentPair}!\nThank you for using FX BULLS PRO`);
+            
+            // Update signal status in history
+            if (signalHistory.length > 0) {
+                signalHistory[0].status = type.toUpperCase() + ' Executed';
+                updateHistory();
+            }
+        }
+
+        function updateHistory() {
+            const tbody = elements.historyTableBody;
+            tbody.innerHTML = '';
+            
+            if (signalHistory.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" style="text-align: center; padding: 40px; color: var(--light-color);">
+                            No trading history yet. Generate your first signal!
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            signalHistory.forEach(signal => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${signal.date} ${signal.time}</td>
+                    <td>${signal.pair}</td>
+                    <td class="${signal.direction === 'BUY' ? 'signal-buy' : 'signal-sell'}">${signal.direction}</td>
+                    <td>${signal.entry}</td>
+                    <td>${signal.tp1}</td>
+                    <td>${signal.tp2}</td>
+                    <td>${signal.tp3}</td>
+                    <td>${signal.sl}</td>
+                    <td style="color: ${signal.status === 'Active' ? 'var(--primary-color)' : 'var(--light-color)'}">${signal.status}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function updateSettings() {
+            if (!currentUser) {
+                // Clear settings if not logged in
+                elements.accountDetails.innerHTML = `
+                    <div class="info-row">
+                        <span class="info-label">Status</span>
+                        <span class="info-value" style="color: var(--danger-color);">Not Logged In</span>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Update account details
+            elements.accountDetails.innerHTML = `
+                <div class="info-row">
+                    <span class="info-label">Name</span>
+                    <span class="info-value">${currentUser.name}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Email</span>
+                    <span class="info-value">${currentUser.email}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">License Type</span>
+                    <span class="info-value">PREMIUM</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Member Since</span>
+                    <span class="info-value">${new Date(currentUser.registeredDate).toLocaleDateString()}</span>
+                </div>
+            `;
+            
+            // Update strategy selection
+            selectStrategy(currentUser.strategy || 'day');
+            
+            // Update user status
+            elements.userStatus.textContent = currentUser.name;
+        }
+
+        function updateSessionInfo() {
+            const hour = new Date().getHours();
+            let session = 'Market Closed';
+            let statusColor = 'var(--danger-color)';
+            
+            if (hour >= 8 && hour < 17) {
+                session = 'London Session';
+                statusColor = 'var(--primary-color)';
+            } else if (hour >= 13 && hour < 22) {
+                session = 'New York Session';
+                statusColor = 'var(--primary-color)';
+            } else if (hour >= 22 || hour < 8) {
+                session = 'Asian Session';
+                statusColor = 'var(--primary-color)';
+            }
+            
+            elements.currentSession.textContent = `Market: ${session}`;
+            
+            // Update session info in settings
+            if (elements.sessionInfo) {
+                elements.sessionInfo.innerHTML = `
+                    <div class="session-item">
+                        <span>Current Session:</span>
+                        <span style="color: ${statusColor}; font-weight: bold;">${session}</span>
+                    </div>
+                    <div class="session-item">
+                        <span>Status:</span>
+                        <span style="color: ${statusColor}; font-weight: bold;">${statusColor === 'var(--primary-color)' ? 'Active' : 'Closed'}</span>
+                    </div>
+                    <div class="session-item">
+                        <span>Best Time:</span>
+                        <span style="color: var(--primary-color); font-weight: bold;">15:00-19:00 GMT</span>
+                    </div>
+                `;
+            }
+        }
+
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', {
                 hour: '2-digit',
                 minute: '2-digit',
                 second: '2-digit',
                 hour12: false
             });
-            
-            elements.sessionTime.textContent = formattedTime;
-            elements.currentTime.textContent = formattedTime;
-            
-            // Determine trading session (SAST = UTC+2)
-            const isWeekday = day >= 1 && day <= 5;
-            let currentSession = "Market Closed";
-            let sessionType = "CLOSED";
-            let isActive = false;
-            let volatility = "Low";
-            
-            if (isWeekday) {
-                if (hour >= 10 && hour < 19) {
-                    currentSession = "London Session";
-                    sessionType = "LONDON";
-                    isActive = true;
-                    
-                    if (hour >= 15 && hour < 19) {
-                        volatility = "VERY HIGH";
-                        sessionType = "LONDON/NY OVERLAP";
-                    } else {
-                        volatility = "HIGH";
-                    }
-                } else if (hour >= 15 && hour < 24) {
-                    currentSession = "New York Session";
-                    sessionType = "NEW YORK";
-                    isActive = true;
-                    
-                    if (hour >= 15 && hour < 19) {
-                        volatility = "VERY HIGH";
-                        sessionType = "LONDON/NY OVERLAP";
-                    } else {
-                        volatility = "HIGH";
-                    }
-                } else if (hour >= 0 && hour < 10) {
-                    currentSession = "Asian Session";
-                    sessionType = "ASIAN";
-                    volatility = "Low";
-                } else if (hour >= 19 && hour < 24) {
-                    currentSession = "New York Session";
-                    sessionType = "NEW YORK";
-                    isActive = true;
-                    volatility = "Medium";
-                }
-            } else {
-                currentSession = "Weekend Session";
-                sessionType = "WEEKEND";
-                volatility = "Very Low";
-            }
-            
-            // Update session display
-            elements.currentSession.textContent = currentSession;
-            elements.sessionType.textContent = sessionType;
-            elements.sessionVolatility.textContent = volatility;
-            elements.sessionStatus.textContent = isActive ? "ACTIVE" : "INACTIVE";
-            elements.dashboardSessionStatus.textContent = isActive ? "ACTIVE" : "INACTIVE";
-            
-            // Update session dot
-            elements.sessionDot.className = "session-dot";
-            elements.sessionDot.classList.add(isActive ? "active" : "inactive");
-            
-            elements.dashboardSessionDot.className = "session-dot";
-            elements.dashboardSessionDot.classList.add(isActive ? "active" : "inactive");
-            
-            // Highlight current session
-            highlightCurrentSession(hour);
-            
-            // Update market status
-            updateMarketStatus(isActive, volatility, hour);
+            elements.currentTime.textContent = timeString;
         }
-        
-        // Highlight current session on dashboard
-        function highlightCurrentSession(hour) {
-            // Reset all sessions
-            elements.sessionLondon.style.borderLeftColor = "rgba(255,255,255,0.1)";
-            elements.sessionNY.style.borderLeftColor = "rgba(255,255,255,0.1)";
-            elements.sessionAsia.style.borderLeftColor = "rgba(255,255,255,0.1)";
-            
-            // Highlight active session
-            if (hour >= 0 && hour < 10) {
-                elements.sessionAsia.style.borderLeftColor = config.sessions.asia.color;
-            } else if (hour >= 10 && hour < 19) {
-                elements.sessionLondon.style.borderLeftColor = config.sessions.london.color;
-            } else if (hour >= 15 && hour < 24) {
-                elements.sessionNY.style.borderLeftColor = config.sessions.ny.color;
-            }
-        }
-        
-        // Update market status
-        function updateMarketStatus(isActive, volatility, hour) {
-            elements.marketStatus.textContent = isActive ? "OPEN" : "CLOSED";
-            elements.marketStatus.style.color = isActive ? "var(--primary-color)" : "var(--danger-color)";
-            
-            // Update volatility indicator
-            const volatilityIndicator = elements.volatilityIndicator;
-            volatilityIndicator.className = "volatility-fill";
-            
-            if (volatility === "VERY HIGH") {
-                volatilityIndicator.classList.add("volatility-high");
-                elements.riskLevel.textContent = "HIGH";
-                elements.riskLevel.style.color = "var(--danger-color)";
-            } else if (volatility === "HIGH" || volatility === "Medium") {
-                volatilityIndicator.classList.add("volatility-medium");
-                elements.riskLevel.textContent = "MEDIUM";
-                elements.riskLevel.style.color = "var(--confidence-medium)";
-            } else {
-                volatilityIndicator.classList.add("volatility-low");
-                elements.riskLevel.textContent = "LOW";
-                elements.riskLevel.style.color = "var(--primary-color)";
-            }
-            
-            // Determine best session for trading
-            if (hour >= 15 && hour < 19) {
-                elements.bestSession.textContent = "NOW";
-                elements.bestSession.style.color = "var(--primary-color)";
-            } else if (hour >= 10 && hour < 15) {
-                elements.bestSession.textContent = "London";
-                elements.bestSession.style.color = config.sessions.london.color;
-            } else if (hour >= 19 && hour < 24) {
-                elements.bestSession.textContent = "NY Close";
-                elements.bestSession.style.color = config.sessions.ny.color;
-            } else {
-                elements.bestSession.textContent = "Wait";
-                elements.bestSession.style.color = "var(--light-color)";
-            }
-        }
-        
-        // Update signal confidence in menu and dashboard
-        function updateSignalConfidence(analysis) {
-            if (!analysis) return;
-            
-            const confidence = Math.round(analysis.confidence * 100);
-            let confidenceText = "";
-            let analysisText = "";
-            let confidenceClass = "";
-            
-            if (confidence >= 80) {
-                confidenceText = "VERY HIGH";
-                analysisText = "Strong market signal - High probability trade";
-                confidenceClass = "high";
-            } else if (confidence >= 60) {
-                confidenceText = "HIGH";
-                analysisText = "Good trading opportunity - Favorable conditions";
-                confidenceClass = "high";
-            } else if (confidence >= 40) {
-                confidenceText = "MODERATE";
-                analysisText = "Average market conditions - Exercise caution";
-                confidenceClass = "medium";
-            } else if (confidence >= 20) {
-                confidenceText = "LOW";
-                analysisText = "Weak signal - Consider waiting for better entry";
-                confidenceClass = "low";
-            } else {
-                confidenceText = "VERY LOW";
-                analysisText = "Poor conditions - Avoid trading";
-                confidenceClass = "low";
-            }
-            
-            // Update menu
-            elements.confidenceLevel.textContent = `${confidenceText} (${confidence}%)`;
-            elements.confidenceFill.style.width = `${confidence}%`;
-            elements.signalAnalysis.textContent = analysisText;
-            
-            // Update dashboard
-            elements.signalConfidenceValue.textContent = `${confidence}%`;
-            elements.signalConfidenceFill.className = "confidence-fill";
-            elements.signalConfidenceFill.classList.add(confidenceClass);
-            elements.signalConfidenceFill.style.width = `${confidence}%`;
-            elements.signalAnalysisText.textContent = analysisText;
-        }
-        
-        // Update current signal in menu
-        function updateCurrentSignal(signal) {
-            if (!signal) return;
-            
-            elements.menuCurrentSignal.textContent = `${signal.pair} ${signal.direction}`;
-            
-            // Add to signal history
-            const historyItem = {
-                time: signal.timestamp.toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit', hour12: false}),
-                pair: signal.pair,
-                direction: signal.direction,
-                entry: signal.entry,
-                tp: signal.tp,
-                sl: signal.sl,
-                confidence: signal.confidence
-            };
-            
-            signalHistory.unshift(historyItem);
-            
-            if (signalHistory.length > 10) {
-                signalHistory = signalHistory.slice(0, 10);
-            }
-            
-            updateSignalHistory();
-            elements.signalsCount.textContent = signalHistory.length;
-        }
-        
-        // Update signal history display
-        function updateSignalHistory() {
-            elements.signalHistoryList.innerHTML = '';
-            
-            if (signalHistory.length === 0) {
-                elements.signalHistoryList.innerHTML = '<div class="signal-history-item"><div>No signals yet</div></div>';
-                return;
-            }
-            
-            signalHistory.forEach(item => {
-                const historyItem = document.createElement('div');
-                historyItem.className = 'signal-history-item';
-                historyItem.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
-                        <strong>${item.time}</strong>
-                        <span style="color: ${item.direction === 'BUY' ? 'var(--primary-color)' : 'var(--danger-color)'}">
-                            ${item.direction}
-                        </span>
-                    </div>
-                    <div style="font-size: 10px;">${item.pair} | Entry: ${item.entry}</div>
-                    <div style="font-size: 9px; color: #888;">Confidence: ${item.confidence}%</div>
-                `;
-                elements.signalHistoryList.appendChild(historyItem);
-            });
-        }
-        
-        // Show registration form
-        function showRegisterForm() {
-            elements.loginForm.classList.add("hidden");
-            elements.registerForm.classList.remove("hidden");
-            elements.licenseKeyDisplay.classList.add("hidden");
-            highlightPressHereMessage();
-        }
-        
-        // Show login form
+
         function showLoginForm() {
-            elements.registerForm.classList.add("hidden");
-            elements.loginForm.classList.remove("hidden");
-            elements.licenseKeyDisplay.classList.add("hidden");
-            highlightPressHereMessage();
+            elements.registerForm.classList.add('hidden');
+            elements.licenseDisplay.classList.add('hidden');
+            elements.loginForm.classList.remove('hidden');
         }
-        
-        // Handle registration with enhanced security
-        function handleRegister() {
-            const name = elements.regName.value.trim();
-            const email = elements.regEmail.value.trim().toLowerCase();
-            const password = elements.regPassword.value;
-            const confirmPassword = elements.regConfirmPassword.value;
-            const tradingStyle = elements.tradingStyleSelect.value;
-            const activationCode = elements.activationCodeInput.value.trim();
-            
-            // Validate inputs
-            if (!name || !email || !password || !confirmPassword || !activationCode) {
-                alert("Please fill in all fields");
-                return;
-            }
-            
-            if (password !== confirmPassword) {
-                alert("Passwords do not match");
-                return;
-            }
-            
-            if (password.length < 6) {
-                alert("Password must be at least 6 characters");
-                return;
-            }
-            
-            if (!validateEmail(email)) {
-                alert("Please enter a valid email address");
-                return;
-            }
-            
-            if (userDatabase[email]) {
-                alert("Email already registered");
-                return;
-            }
-            
-            // Validate activation code - USING SECRET CODES
-            if (!config.activationCodes.includes(activationCode)) {
-                alert("Invalid activation code. Please contact 067 277 1746 for a valid code.");
-                return;
-            }
-            
-            if (availableKeys.length === 0) {
-                alert("No more license keys available");
-                return;
-            }
-            
-            // Assign a license key
-            const licenseKey = availableKeys.pop();
-            usedKeys[licenseKey] = email;
-            
-            // Create user account with timestamp
-            const registrationDate = new Date().toISOString();
-            userDatabase[email] = {
-                name: name,
-                password: password,
-                licenseKey: licenseKey,
-                tradingStyle: tradingStyle,
-                registeredDate: registrationDate,
-                lastLogin: registrationDate,
-                status: "active",
-                paymentVerified: true
-            };
-            
-            // Save to localStorage
-            saveUsersToStorage();
-            
-            // Mark as registered
-            localStorage.setItem("isRegistered", "true");
-            localStorage.setItem("userEmail", email);
-            localStorage.setItem("userName", name);
-            localStorage.setItem("userTradingStyle", tradingStyle);
-            localStorage.setItem("licenseKey", licenseKey);
-            
-            // Show license key to user
-            elements.generatedLicenseKey.textContent = licenseKey;
-            elements.registerForm.classList.add("hidden");
-            elements.licenseKeyDisplay.classList.remove("hidden");
-            
-            // Update registration status
-            updateRegistrationStatus();
-            
-            // Show success message
-            alert("Registration successful! Please save your license key.");
+
+        function showRegisterForm() {
+            elements.loginForm.classList.add('hidden');
+            elements.licenseDisplay.classList.add('hidden');
+            elements.registerForm.classList.remove('hidden');
         }
-        
-        // Validate email format
-        function validateEmail(email) {
-            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return re.test(email);
-        }
-        
-        // Handle login with enhanced security
+
         function handleLogin() {
             const email = elements.loginEmail.value.trim().toLowerCase();
             const password = elements.loginPassword.value;
             const licenseKey = elements.loginLicenseKey.value.trim();
             
-            // Validate inputs
             if (!email || !password || !licenseKey) {
-                alert("Please fill in all fields");
+                alert('Please fill in all fields');
                 return;
             }
             
-            // Check login attempts
-            if (!loginAttempts[email]) {
-                loginAttempts[email] = 0;
-            }
-            
-            if (loginAttempts[email] >= config.security.maxLoginAttempts) {
-                alert("Too many failed attempts. Please try again later.");
-                return;
-            }
-            
-            // Check if user exists
             const user = userDatabase[email];
+            
             if (!user) {
-                loginAttempts[email]++;
-                alert("User not found. Please register.");
+                alert('User not found. Please register.');
                 return;
             }
             
-            // Check password
             if (user.password !== password) {
-                loginAttempts[email]++;
-                alert("Incorrect password");
+                alert('Incorrect password');
                 return;
             }
             
-            // Check license key
             if (user.licenseKey !== licenseKey) {
-                loginAttempts[email]++;
-                alert("Invalid license key");
+                alert('Invalid license key');
                 return;
             }
             
-            // Reset login attempts on successful login
-            loginAttempts[email] = 0;
+            // Login successful
+            currentUser = user;
+            localStorage.setItem('loggedIn', 'true');
+            localStorage.setItem('userEmail', email);
+            localStorage.setItem('userName', user.name);
+            localStorage.setItem('userTradingStrategy', user.strategy);
+            localStorage.setItem('licenseKey', licenseKey);
             
-            // Update last login
-            user.lastLogin = new Date().toISOString();
-            saveUsersToStorage();
+            // Update UI
+            elements.connectionDot.className = 'status-dot connected';
+            elements.connectionStatus.textContent = 'Connected';
+            elements.userStatus.textContent = user.name;
+            elements.loginModal.classList.add('hidden');
             
-            // Save login state
-            localStorage.setItem("loggedIn", "true");
-            localStorage.setItem("userEmail", email);
-            localStorage.setItem("userName", user.name);
-            localStorage.setItem("userTradingStyle", user.tradingStyle);
-            localStorage.setItem("licenseKey", licenseKey);
+            // Update settings
+            updateSettings();
             
-            // Show dashboard
-            showDashboard(user.name, user.tradingStyle);
-            updateMenuUserDetails(user.name, email, user.tradingStyle);
-            setActiveStyleOption(user.tradingStyle);
+            // Generate initial signal
+            generateAdvancedSignal();
             
-            // Update registration status
-            updateRegistrationStatus();
+            // Switch to trade tab
+            switchTab('trade');
         }
-        
-        // Show dashboard
-        function showDashboard(userName, tradingStyle) {
-            elements.loginContainer.classList.add("hidden");
-            elements.dashboard.classList.remove("hidden");
+
+        function handleRegister() {
+            const name = elements.regName.value.trim();
+            const email = elements.regEmail.value.trim().toLowerCase();
+            const password = elements.regPassword.value;
+            const strategy = elements.tradingStrategy.value;
+            const activationCode = elements.activationCode.value.trim();
             
-            elements.userNameDisplay.textContent = userName.toUpperCase();
-            updateDashboardTradingStyle(tradingStyle);
+            if (!name || !email || !password || !activationCode) {
+                alert('Please fill in all fields');
+                return;
+            }
             
-            updateChart(tradingStyle);
-            generateSignal(tradingStyle);
+            if (userDatabase[email]) {
+                alert('Email already registered');
+                return;
+            }
+            
+            if (!config.activationCodes.includes(activationCode)) {
+                alert('Invalid activation code. Please contact 067 277 1746 for a valid code.');
+                return;
+            }
+            
+            // Generate license key
+            const licenseKey = generateLicenseKey();
+            
+            // Create user
+            userDatabase[email] = {
+                name: name,
+                email: email,
+                password: password,
+                licenseKey: licenseKey,
+                strategy: strategy,
+                registeredDate: new Date().toISOString()
+            };
+            
+            // Show license key
+            elements.generatedLicenseKey.textContent = licenseKey;
+            elements.registerForm.classList.add('hidden');
+            elements.licenseDisplay.classList.remove('hidden');
+            
+            // Save email
+            localStorage.setItem('userEmail', email);
         }
-        
-        // Handle logout
+
+        function generateLicenseKey() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let key = '';
+            for (let i = 0; i < 4; i++) {
+                for (let j = 0; j < 4; j++) {
+                    key += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                if (i < 3) key += '-';
+            }
+            return key;
+        }
+
+        function checkSavedLogin() {
+            const loggedIn = localStorage.getItem('loggedIn') === 'true';
+            const userEmail = localStorage.getItem('userEmail');
+            
+            if (loggedIn && userEmail && userDatabase[userEmail]) {
+                currentUser = userDatabase[userEmail];
+                elements.connectionDot.className = 'status-dot connected';
+                elements.connectionStatus.textContent = 'Connected';
+                elements.userStatus.textContent = currentUser.name;
+                elements.loginModal.classList.add('hidden');
+                updateSettings();
+                generateAdvancedSignal();
+            }
+        }
+
         function handleLogout() {
-            localStorage.removeItem("loggedIn");
-            location.reload();
+            currentUser = null;
+            localStorage.removeItem('loggedIn');
+            elements.connectionDot.className = 'status-dot disconnected';
+            elements.connectionStatus.textContent = 'Disconnected';
+            elements.userStatus.textContent = 'Not logged in';
+            elements.loginModal.classList.remove('hidden');
+            showLoginForm();
         }
-        
-        // Handle refresh
-        function handleRefresh() {
-            const tradingStyle = localStorage.getItem("userTradingStyle");
-            generateSignal(tradingStyle);
-        }
-        
-        // Handle pair change
-        function handlePairChange() {
-            const tradingStyle = localStorage.getItem("userTradingStyle");
-            updateChart(tradingStyle);
-            generateSignal(tradingStyle);
-        }
-        
-        // Update TradingView chart based on trading style
-        function updateChart(tradingStyle) {
-            const pair = elements.pairSelect.value;
-            const pairName = elements.pairSelect.options[elements.pairSelect.selectedIndex].text;
-            
-            elements.signalPair.textContent = pairName.toUpperCase();
-            
-            const timeframe = config.tradingStyles[tradingStyle]?.timeframe || "15";
-            const tradingViewSymbol = pair.replace("/", "");
-            const iframeSrc = `https://s.tradingview.com/widgetembed/?symbol=${tradingViewSymbol}&interval=${timeframe}&theme=dark&style=1&timezone=Africa%2FJohannesburg&hide_side_toolbar=true`;
-            elements.chartIframe.src = iframeSrc;
-        }
-        
-        // Enhanced Fetch current price from Twelve Data API
-        async function getCurrentPrice(symbol) {
-            try {
-                // Check cache first
-                const cacheKey = `${symbol}_price`;
-                const now = Date.now();
-                if (marketDataCache[cacheKey] && (now - marketDataCache[cacheKey].timestamp < 30000)) {
-                    return marketDataCache[cacheKey].price;
-                }
-                
-                const response = await fetch(`https://api.twelvedata.com/price?symbol=${symbol}&apikey=${config.apiKey}`);
-                const data = await response.json();
-                
-                if (data.price) {
-                    const price = parseFloat(data.price);
-                    marketDataCache[cacheKey] = {
-                        price: price,
-                        timestamp: now
-                    };
-                    return price;
-                } else {
-                    throw new Error(data.message || "Failed to fetch price");
-                }
-            } catch (error) {
-                console.error("Error fetching price:", error);
-                showError(`FAILED TO GET MARKET DATA: ${error.message}`);
-                return null;
-            }
-        }
-        
-        // Enhanced historical data fetch
-        async function getHistoricalData(symbol, interval = "1day", period = 100) {
-            try {
-                const cacheKey = `${symbol}_${interval}_${period}`;
-                const now = Date.now();
-                
-                if (marketDataCache[cacheKey] && (now - marketDataCache[cacheKey].timestamp < 60000)) {
-                    return marketDataCache[cacheKey].data;
-                }
-                
-                const response = await fetch(`https://api.twelvedata.com/time_series?symbol=${symbol}&interval=${interval}&outputsize=${period}&apikey=${config.apiKey}`);
-                const data = await response.json();
-                
-                if (data.values && data.values.length > 0) {
-                    const historicalData = data.values.map(item => ({
-                        close: parseFloat(item.close),
-                        high: parseFloat(item.high),
-                        low: parseFloat(item.low),
-                        open: parseFloat(item.open),
-                        volume: parseFloat(item.volume || 0),
-                        datetime: item.datetime
-                    })).reverse();
-                    
-                    marketDataCache[cacheKey] = {
-                        data: historicalData,
-                        timestamp: now
-                    };
-                    
-                    return historicalData;
-                } else {
-                    throw new Error("No historical data available");
-                }
-            } catch (error) {
-                console.error("Error fetching historical data:", error);
-                return null;
-            }
-        }
-        
-        // Advanced RSI calculation
-        function calculateRSI(prices, period = 14) {
-            if (prices.length < period + 1) return 50;
-            
-            let gains = 0;
-            let losses = 0;
-            
-            for (let i = 1; i <= period; i++) {
-                const change = prices[i] - prices[i - 1];
-                if (change >= 0) {
-                    gains += change;
-                } else {
-                    losses -= change;
-                }
-            }
-            
-            let avgGain = gains / period;
-            let avgLoss = losses / period;
-            
-            for (let i = period + 1; i < prices.length; i++) {
-                const change = prices[i] - prices[i - 1];
-                
-                if (change >= 0) {
-                    avgGain = ((avgGain * (period - 1)) + change) / period;
-                    avgLoss = (avgLoss * (period - 1)) / period;
-                } else {
-                    avgGain = (avgGain * (period - 1)) / period;
-                    avgLoss = ((avgLoss * (period - 1)) - change) / period;
-                }
-            }
-            
-            if (avgLoss === 0) return 100;
-            
-            const rs = avgGain / avgLoss;
-            return 100 - (100 / (1 + rs));
-        }
-        
-        // Enhanced EMA calculation
-        function calculateEMA(prices, period) {
-            if (prices.length < period) return null;
-            
-            const k = 2 / (period + 1);
-            let ema = prices.slice(0, period).reduce((a, b) => a + b, 0) / period;
-            
-            for (let i = period; i < prices.length; i++) {
-                ema = (prices[i] * k) + (ema * (1 - k));
-            }
-            
-            return ema;
-        }
-        
-        // Enhanced MACD calculation
-        function calculateMACD(prices) {
-            if (prices.length < 35) return { macd: 0, signal: 0, histogram: 0 };
-            
-            const ema12 = calculateEMA(prices, 12);
-            const ema26 = calculateEMA(prices, 26);
-            
-            if (ema12 === null || ema26 === null) {
-                return { macd: 0, signal: 0, histogram: 0 };
-            }
-            
-            const macd = ema12 - ema26;
-            
-            // For signal line, use EMA of recent MACD-like values
-            const recentPrices = prices.slice(-26);
-            const recentEma12 = calculateEMA(recentPrices, 12);
-            const recentEma26 = calculateEMA(recentPrices, 26);
-            const signal = recentEma12 && recentEma26 ? (recentEma12 - recentEma26) : macd;
-            
-            const histogram = macd - signal;
-            
-            return { macd, signal, histogram };
-        }
-        
-        // Enhanced market analysis with improved accuracy
-        async function analyzeMarket(pair, currentPrice) {
-            try {
-                // Get historical data for analysis
-                const historicalData = await getHistoricalData(pair, "1hour", 100);
-                
-                if (!historicalData || historicalData.length < 50) {
-                    return enhancedAnalysis(pair, currentPrice);
-                }
-                
-                // Extract data arrays
-                const closingPrices = historicalData.map(item => item.close);
-                const highs = historicalData.map(item => item.high);
-                const lows = historicalData.map(item => item.low);
-                
-                // Calculate technical indicators
-                const rsi = calculateRSI(closingPrices, 14);
-                const macd = calculateMACD(closingPrices);
-                
-                // Enhanced analysis factors
-                const recentHigh = Math.max(...closingPrices.slice(-20));
-                const recentLow = Math.min(...closingPrices.slice(-20));
-                const pricePosition = (currentPrice - recentLow) / (recentHigh - recentLow);
-                
-                // Time-based factors
-                const hour = new Date().getHours();
-                const isOverlapSession = hour >= 15 && hour < 19;
-                
-                // Pair-specific characteristics
-                const pairFactors = {
-                    "EUR/USD": { volatility: 0.0008, trendBias: 0.1 },
-                    "GBP/USD": { volatility: 0.0012, trendBias: -0.2 },
-                    "USD/JPY": { volatility: 0.09, trendBias: 0.3 },
-                    "AUD/USD": { volatility: 0.0011, trendBias: -0.1 },
-                    "USD/CAD": { volatility: 0.0009, trendBias: 0.2 },
-                    "BTC/USD": { volatility: 200, trendBias: 0.5 },
-                    "XAU/USD": { volatility: 15, trendBias: -0.4 }
-                };
-                
-                const pairFactor = pairFactors[pair] || { volatility: 0.001, trendBias: 0 };
-                
-                // Composite confidence calculation
-                let confidenceScore = 0;
-                
-                // Technical indicator signals
-                if (rsi < 30) confidenceScore += 0.3;
-                if (rsi > 70) confidenceScore -= 0.3;
-                
-                if (macd.macd > macd.signal) confidenceScore += 0.2;
-                if (macd.macd < macd.signal) confidenceScore -= 0.2;
-                
-                // Price position signals
-                if (pricePosition < 0.3) confidenceScore += 0.15;
-                if (pricePosition > 0.7) confidenceScore -= 0.15;
-                
-                // Pair bias
-                confidenceScore += pairFactor.trendBias;
-                
-                // Session analysis
-                if (isOverlapSession) confidenceScore += 0.2;
-                
-                // Determine direction based on composite score
-                let direction;
-                if (confidenceScore > 0.3) {
-                    direction = "BUY";
-                } else if (confidenceScore < -0.3) {
-                    direction = "SELL";
-                } else {
-                    // Use RSI for neutral cases
-                    direction = rsi > 50 ? "BUY" : "SELL";
-                }
-                
-                // Calculate final confidence (0-1 scale)
-                const rawConfidence = Math.abs(confidenceScore);
-                const confidence = Math.min(1, Math.max(0.4, rawConfidence * 2));
-                
-                return {
-                    direction: direction,
-                    confidence: confidence,
-                    volatility: pairFactor.volatility,
-                    rsi: rsi,
-                    trend: direction === "BUY" ? "up" : "down"
-                };
-            } catch (error) {
-                console.error("Error in market analysis:", error);
-                return enhancedAnalysis(pair, currentPrice);
-            }
-        }
-        
-        // Enhanced analysis fallback
-        function enhancedAnalysis(pair, currentPrice) {
-            const hour = new Date().getHours();
-            
-            // Pair-specific characteristics
-            const pairFactors = {
-                "EUR/USD": { volatility: 0.0008, trendBias: 0.1 },
-                "GBP/USD": { volatility: 0.0012, trendBias: -0.2 },
-                "USD/JPY": { volatility: 0.09, trendBias: 0.3 },
-                "AUD/USD": { volatility: 0.0011, trendBias: -0.1 },
-                "USD/CAD": { volatility: 0.0009, trendBias: 0.2 },
-                "BTC/USD": { volatility: 200, trendBias: 0.5 },
-                "XAU/USD": { volatility: 15, trendBias: -0.4 }
-            };
-            
-            const pairFactor = pairFactors[pair] || { volatility: 0.001, trendBias: 0 };
-            
-            // Time-based factors
-            const isOverlapSession = hour >= 15 && hour < 19;
-            const sessionFactor = isOverlapSession ? 0.2 : 0;
-            
-            // Combine factors
-            const totalScore = pairFactor.trendBias + sessionFactor + (Math.random() * 0.2 - 0.1);
-            
-            // Determine direction
-            let direction;
-            if (totalScore > 0.2) {
-                direction = "BUY";
-            } else if (totalScore < -0.2) {
-                direction = "SELL";
-            } else {
-                direction = Math.random() > 0.5 ? "BUY" : "SELL";
-            }
-            
-            // Calculate confidence
-            const confidence = Math.min(0.9, Math.max(0.4, Math.abs(totalScore) + 0.3));
-            
-            return {
-                direction: direction,
-                confidence: confidence,
-                volatility: pairFactor.volatility,
-                rsi: 50,
-                trend: direction === "BUY" ? "up" : "down"
-            };
-        }
-        
-        // Enhanced signal generation with improved accuracy
-        async function generateSignal(tradingStyle) {
-            elements.signalMessage.innerHTML = `
-                <div style="display: flex; justify-content: center; align-items: center; height: 30px;">
-                    <div class="spinner" style="width: 18px; height: 18px; border-width: 3px;"></div>
-                    <span style="margin-left: 8px;">ANALYZING MARKET DATA...</span>
-            </div>
-            `;
-            
-            const pair = elements.pairSelect.value;
-            const currentPrice = await getCurrentPrice(pair);
-            
-            if (currentPrice === null) return;
-            
-            const analysis = await analyzeMarket(pair, currentPrice);
-            
-            // Update signal confidence
-            updateSignalConfidence(analysis);
-            
-            const pipSize = config.pipValues[pair] || 0.0001;
-            const styleConfig = config.tradingStyles[tradingStyle] || config.tradingStyles.day;
-            
-            // Enhanced TP/SL calculation based on confidence and volatility
-            let tpPips, slPips;
-            
-            // Base pips from trading style
-            const basePips = styleConfig.minPips || 1000;
-            
-            // Adjust based on analysis confidence
-            const confidenceMultiplier = analysis.confidence;
-            
-            tpPips = Math.round(basePips * confidenceMultiplier);
-            
-            // Adjust SL based on volatility
-            const volatilityMultiplier = Math.max(0.5, Math.min(1.5, analysis.volatility * 10));
-            slPips = Math.round(tpPips * 0.3 * volatilityMultiplier);
-            
-            // Ensure minimum values
-            tpPips = Math.max(styleConfig.minPips || 1000, tpPips);
-            slPips = Math.max(100, slPips);
-            
-            // Calculate TP/SL prices
-            let entry, tp, sl;
-            
-            if (analysis.direction === "BUY") {
-                entry = currentPrice.toFixed(5);
-                tp = (currentPrice + (tpPips * pipSize)).toFixed(5);
-                sl = (currentPrice - (slPips * pipSize)).toFixed(5);
-            } else {
-                entry = currentPrice.toFixed(5);
-                tp = (currentPrice - (tpPips * pipSize)).toFixed(5);
-                sl = (currentPrice + (slPips * pipSize)).toFixed(5);
-            }
-            
-            // Adjust decimal places for different assets
-            const decimalPlaces = pair === "BTC/USD" ? 2 : (pair === "XAU/USD" ? 2 : 5);
-            entry = parseFloat(entry).toFixed(decimalPlaces);
-            tp = parseFloat(tp).toFixed(decimalPlaces);
-            sl = parseFloat(sl).toFixed(decimalPlaces);
-            
-            const signal = {
-                pair: pair,
-                direction: analysis.direction,
-                entry: entry,
-                tp: tp,
-                sl: sl,
-                confidence: Math.round(analysis.confidence * 100),
-                timestamp: new Date()
-            };
-            
-            updateCurrentSignal(signal);
-            displaySignal(signal);
-        }
-        
-        // Enhanced signal display
-        function displaySignal(signal) {
-            elements.signalDirection.textContent = signal.direction;
-            elements.signalDirection.className = "signal-direction " + signal.direction.toLowerCase();
-            
-            if (signal.pair === "BTC/USD") {
-                elements.signalDirection.style.color = "var(--bitcoin)";
-            } else if (signal.pair === "XAU/USD") {
-                elements.signalDirection.style.color = "var(--gold)";
-            }
-            
-            elements.signalMessage.innerHTML = `
-                <div>SIGNAL GENERATED: ${signal.timestamp.toLocaleTimeString()}</div>
-                <div style="font-size: 12px; color: var(--light-color); margin-top: 5px;">
-                    TP: ${Math.round((Math.abs(parseFloat(signal.tp) - parseFloat(signal.entry)) / config.pipValues[signal.pair]))} pips
-                </div>
-            `;
-            
-            elements.entryPrice.textContent = signal.entry;
-            elements.takeProfit.textContent = signal.tp;
-            elements.stopLoss.textContent = signal.sl;
-        }
-        
-        // Show error message
-        function showError(message) {
-            elements.signalMessage.innerHTML = `
-                <div class="error-message">${message}</div>
-            `;
-        }
-        
-        // Fixture functions
-        function showMarketOverview() {
-            alert("Market Overview: Current market conditions displayed on dashboard.");
-        }
-        
-        function showSignalHistory() {
-            alert("Signal History: View your recent trading signals in the menu.");
-        }
-        
-        function showSettings() {
-            alert("Settings: Configure your trading preferences in the menu.");
-        }
-        
-        function showEconomicCalendar() {
-            alert("Economic Calendar: Important economic events will be displayed here in future updates.");
-        }
-        
-        function showNewsFeed() {
-            alert("News Feed: Latest financial news will be displayed here in future updates.");
-        }
-        
-        function showAlerts() {
-            alert("Alerts: Set price alerts and notifications here in future updates.");
-        }
-        
-        // Admin Panel Functions
-        function openAdminPanel() {
-            const code = prompt("Enter admin access code:");
-            if (code === config.adminCode) {
-                adminAccessGranted = true;
-                showAdminPanel();
-            } else {
-                alert("Invalid admin code!");
-            }
-        }
-        
-        function openAdminPanelWithCode(event) {
-            event.preventDefault();
-            openAdminPanel();
-        }
-        
-        function showAdminPanel() {
-            if (!adminAccessGranted) {
-                alert("Admin access required!");
-                return;
-            }
-            
-            updateAdminStats();
-            elements.adminPanel.classList.add("active");
-            elements.adminOverlay.classList.add("active");
-        }
-        
-        function closeAdminPanel() {
-            elements.adminPanel.classList.remove("active");
-            elements.adminOverlay.classList.remove("active");
-        }
-        
-        function updateAdminStats() {
-            const userCount = Object.keys(userDatabase).length;
-            const today = new Date().toISOString().split('T')[0];
-            const activeToday = Object.values(userDatabase).filter(user => 
-                user.lastLogin && user.lastLogin.includes(today)
-            ).length;
-            
-            const revenue = userCount * 200; // R200 per user
-            
-            elements.totalUsers.textContent = userCount;
-            elements.activeUsers.textContent = activeToday;
-            elements.totalRevenue.textContent = "R" + revenue;
-            
-            // Calculate signal accuracy (simulated for now)
-            const accuracy = Math.floor(Math.random() * 20) + 75; // 75-95%
-            elements.signalAccuracy.textContent = accuracy + "%";
-            
-            // Update users table
-            updateUsersTable();
-        }
-        
-        function updateUsersTable() {
-            const tbody = elements.usersTableBody;
-            tbody.innerHTML = '';
-            
-            const users = Object.entries(userDatabase);
-            
-            if (users.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No users registered yet</td></tr>';
-                return;
-            }
-            
-            users.forEach(([email, user], index) => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>${user.name}</td>
-                    <td>${email}</td>
-                    <td>${getStyleDisplayName(user.tradingStyle)}</td>
-                    <td>${user.licenseKey}</td>
-                    <td>${new Date(user.registeredDate).toLocaleDateString()}</td>
-                    <td style="color: var(--primary-color);">${user.status || 'active'}</td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-        
-        function exportUserData() {
-            if (!adminAccessGranted) {
-                alert("Admin access required!");
-                return;
-            }
-            
-            const dataStr = JSON.stringify(userDatabase, null, 2);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            
-            const exportFileDefaultName = `fxbulls_users_${new Date().toISOString().split('T')[0]}.json`;
-            
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
-            linkElement.click();
-            
-            alert("User data exported successfully!");
-        }
-        
-        function quickAction(action) {
-            switch(action) {
-                case 'analyze':
-                    const pair = elements.pairSelect.value;
-                    alert(`Analyzing ${pair}...`);
-                    generateSignal(localStorage.getItem("userTradingStyle") || "day");
-                    break;
-                case 'risk':
-                    alert("Risk assessment based on current market conditions.");
-                    break;
-                case 'trend':
-                    alert("Trend analysis shows current market direction.");
-                    break;
-                case 'settings':
-                    alert("App settings and preferences can be adjusted here.");
-                    break;
-            }
-        }
-        
-        // Initialize the app
-        document.addEventListener("DOMContentLoaded", init);
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
